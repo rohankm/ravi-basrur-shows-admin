@@ -44,7 +44,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast("Genre deleted successfully.");
       setOpen(false);
     } catch (err) {
-      toast("Something Went Wrong.");
+      toast.error("Something Went Wrong.");
     }
     setLoading(false);
   };
