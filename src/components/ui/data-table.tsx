@@ -2,6 +2,7 @@
 
 import {
   ColumnDef,
+  PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -20,11 +21,22 @@ import {
 import { Input } from "./input";
 import { Button } from "./button";
 import { ScrollArea, ScrollBar } from "./scroll-area";
+import { useEffect, useReducer, useState } from "react";
+import { DataTablePagination } from "./DataTablePagination";
+import useFetchData from "@/hooks/supabase/useFetchData";
+
+import { PostgrestQueryBuilder } from "@supabase/postgrest-js";
+import {
+  GenericSchema,
+  GenericTable,
+} from "@supabase/supabase-js/dist/module/lib/types";
+import { keepPreviousData } from "@tanstack/react-query";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data?: TData[];
   searchKey: string;
+  query?: PostgrestQueryBuilder<GenericSchema, GenericTable, any, any>;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,12 +45,39 @@ export function DataTable<TData, TValue>({
   searchKey,
   query,
 }: DataTableProps<TData, TValue>) {
+  const rerender = useReducer(() => ({}), {})[1];
+
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const result = useFetchData({
+    query: query!
+      .select("*", { count: "exact" })
+      .range(
+        pagination.pageIndex * pagination.pageSize,
+        pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
+      ),
+    options: {
+      enabled: !!query,
+      placeholderData: keepPreviousData,
+    },
+  });
+  console.log({ result });
+
+  // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({
-    data,
+    data: data ? data : result.data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    rowCount: result.count ?? -1,
+    manualPagination: true,
     // manualPagination: true,
     // pageCount: -1,
     // initialState: { pageIndex: 0 },
@@ -108,36 +147,7 @@ export function DataTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              query.fetchPreviousPage();
-              table.previousPage();
-            }}
-            disabled={!query.hasPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              query.fetchNextPage();
-              table.nextPage();
-            }}
-            disabled={!query.hasNextPage}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <DataTablePagination table={table} />
     </>
   );
 }

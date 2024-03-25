@@ -11,19 +11,13 @@ import useFetchData from "@/hooks/supabase/useFetchData";
 import { supabase } from "@/lib/supabase/client";
 import { useMemo } from "react";
 import useInfiniteFetchData from "@/hooks/supabase/useInfiniteFetchData";
+import { keepPreviousData } from "@tanstack/react-query";
 
 interface ProductsClientProps {}
 
 export const Genres: React.FC<ProductsClientProps> = ({}) => {
   const router = useRouter();
   const pathName = usePathname();
-  const genres = useInfiniteFetchData({
-    query: supabase.from("genres").select("*"),
-    loadAmount: 5,
-  });
-
-  const data = useMemo(() => [genres.finalData ?? []], [genres.finalData]);
-  console.log(genres.hasPreviousPage);
 
   return (
     <>
@@ -39,11 +33,11 @@ export const Genres: React.FC<ProductsClientProps> = ({}) => {
         </Button>
       </div>
       <Separator />
+
       <DataTable
         searchKey="name"
         columns={columns}
-        data={genres.finalData ?? []}
-        query={genres}
+        query={supabase.from("genres")}
       />
     </>
   );

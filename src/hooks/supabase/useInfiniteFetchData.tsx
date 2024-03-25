@@ -72,7 +72,7 @@ function useInfiniteFetchData<
 
   const results = useInfiniteQuery({
     queryKey: queryKey,
-    queryFn: async ({ pageParam = 0 }: { pageParam: number }) => {
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
       const response = await query.range(
         pageParam * loadAmount,
         pageParam * loadAmount + loadAmount - 1
@@ -84,6 +84,7 @@ function useInfiniteFetchData<
 
       return response;
     },
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage?.data?.length < loadAmount || !lastPage || !lastPage?.data) {
         return undefined;
@@ -149,7 +150,7 @@ function useInfiniteFetchData<
 
   return {
     finalData,
-    count: finalData?.count ?? null,
+    count: results?.data?.pages?.[0].count ?? -1,
     ...results,
   };
 }
