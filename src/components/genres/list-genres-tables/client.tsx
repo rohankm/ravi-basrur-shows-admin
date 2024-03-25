@@ -38,6 +38,7 @@ export const Genres: React.FC<ProductsClientProps> = ({}) => {
         searchKey="name"
         columns={columns}
         query={supabase.from("genres")}
+        tableName="genres"
       />
     </>
   );

@@ -21,7 +21,7 @@ import {
 import { Input } from "./input";
 import { Button } from "./button";
 import { ScrollArea, ScrollBar } from "./scroll-area";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 import useFetchData from "@/hooks/supabase/useFetchData";
 
@@ -31,43 +31,61 @@ import {
   GenericTable,
 } from "@supabase/supabase-js/dist/module/lib/types";
 import { keepPreviousData } from "@tanstack/react-query";
+import { useDebounce } from "@uidotdev/usehooks";
+import { supabase } from "@/lib/supabase/client";
+import { Skeleton } from "./skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[];
   searchKey: string;
-  query?: PostgrestQueryBuilder<GenericSchema, GenericTable, any, any>;
+
+  tableName?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-  query,
-}: DataTableProps<TData, TValue>) {
-  const rerender = useReducer(() => ({}), {})[1];
 
+  tableName,
+}: DataTableProps<TData, TValue>) {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const result = useFetchData({
-    query: query!
-      .select("*", { count: "exact" })
-      .range(
-        pagination.pageIndex * pagination.pageSize,
-        pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
-      ),
+
+  const memoQuery = useMemo(
+    () =>
+      supabase
+        .from(tableName!)
+        .select("*", { count: "exact" })
+        .ilike(searchKey, `%${debouncedSearch}%`)
+        .range(
+          pagination.pageIndex * pagination.pageSize,
+          pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
+        ),
+    [pagination, debouncedSearch, searchKey, tableName]
+  );
+  const {
+    data: resultData,
+    count,
+    isFetching,
+  } = useFetchData({
+    query: memoQuery,
     options: {
-      enabled: !!query,
-      placeholderData: keepPreviousData,
+      enabled: !!tableName,
+      // placeholderData: keepPreviousData,
     },
   });
-  console.log({ result });
+
+  // console.log({ result });
 
   // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({
-    data: data ? data : result.data ?? [],
+    data: data ? data : resultData ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -76,7 +94,7 @@ export function DataTable<TData, TValue>({
       pagination,
     },
     onPaginationChange: setPagination,
-    rowCount: result.count ?? -1,
+    rowCount: count ?? -1,
     manualPagination: true,
     // manualPagination: true,
     // pageCount: -1,
@@ -90,10 +108,8 @@ export function DataTable<TData, TValue>({
     <>
       <Input
         placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn(searchKey)?.setFilterValue(event.target.value)
-        }
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
         className="w-full md:max-w-sm"
       />
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
@@ -133,6 +149,16 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
+            ) : isFetching ? (
+              Array(10)
+                .fill(0)
+                .map((d, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={columns.length} className="">
+                      <Skeleton className="w-full h-[36px] " />
+                    </TableCell>
+                  </TableRow>
+                ))
             ) : (
               <TableRow>
                 <TableCell
