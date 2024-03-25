@@ -47,7 +47,6 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-
   tableName,
 }: DataTableProps<TData, TValue>) {
   const [search, setSearch] = useState("");
@@ -81,11 +80,11 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  // console.log({ result });
+  console.log({ resultData });
 
   // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({
-    data: data ? data : resultData ?? [],
+    data: [...(data ? data : resultData ?? [])],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

@@ -1,6 +1,6 @@
 "use client";
 
-import { AddGenre } from "@/components/genres/AddGenre";
+import { CreateEdit } from "@/components/genres/CreateEditGenre";
 import type { Metadata } from "next";
 import { redirect, useSearchParams } from "next/navigation";
 
@@ -11,11 +11,12 @@ export default function DashboardLayout({
 }) {
   const searchParams = useSearchParams();
   const newGenre = !!searchParams.get("new_genre");
+  const editGenre = searchParams.get("edit_genre");
 
   return (
     <>
       {children}
-      <AddGenre open={newGenre} />
+      <CreateEdit open={newGenre || !!editGenre} editGenreId={editGenre} />
     </>
   );
 }

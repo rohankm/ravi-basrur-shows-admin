@@ -15,9 +15,11 @@ export default function useMutationData() {
     mutationFn: async ({
       query,
       addFirst = false,
+      deleteId,
     }: {
       query: PostgrestBuilder<any>;
       addFirst?: boolean;
+      deleteId?: string;
     }) => {
       const mutationData = await query;
 
@@ -25,6 +27,15 @@ export default function useMutationData() {
         throw mutationData.error;
       }
 
+      console.log({ mutationData });
+
+      if (deleteId) {
+        return {
+          data: { id: deleteId, is_deleted: true },
+          query,
+          addFirst,
+        };
+      }
       // console.log(mutationData);
       return { data: mutationData.data, query, addFirst };
     },

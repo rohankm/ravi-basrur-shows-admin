@@ -1,5 +1,5 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { AddGenre } from "@/components/genres/AddGenre";
+import { AddGenre } from "@/components/genres/CreateEditGenre";
 import { Genres } from "@/components/genres/list-genres-tables/client";
 import { useSearchParams } from "next/navigation";
 import React from "react";

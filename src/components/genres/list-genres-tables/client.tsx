@@ -34,12 +34,7 @@ export const Genres: React.FC<ProductsClientProps> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable
-        searchKey="name"
-        columns={columns}
-        query={supabase.from("genres")}
-        tableName="genres"
-      />
+      <DataTable searchKey="name" columns={columns} tableName="genres" />
     </>
   );
 };
