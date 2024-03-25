@@ -919,6 +919,30 @@
   dependencies:
     tslib "^2.4.0"
 
+"@tanstack/query-core@5.28.8":
+  version "5.28.8"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.28.8.tgz#48571172ed2d70fc0eae7004ccf445ad4e8b0558"
+  integrity sha512-cx64XHeB0kvKxFt22ibvegPeOxnaWVFUbAuhXoIrb7+XePEexHWoB9Kq5n9qroNPkRwQZwgFAP9HNbQz5ohoIg==
+
+"@tanstack/query-devtools@5.28.6":
+  version "5.28.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-devtools/-/query-devtools-5.28.6.tgz#da31268b79102e6fd8d6df64763ec9c02d84bd58"
+  integrity sha512-DXJGqbrsteWU9XehDf6s3k3QxwQqGUlNXpitsF1xbwkYBcDaAakiC6hjJSMfPBHOrbZCnWfAGCVf4vh2D75/xw==
+
+"@tanstack/react-query-devtools@^5.28.8":
+  version "5.28.8"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query-devtools/-/react-query-devtools-5.28.8.tgz#d9299198144de6f1b9feb04a27eaebd4a14db638"
+  integrity sha512-NorR2ueGlGdB5PTvt1WynzjfNI/OJwiisB1r0UAwgi0Em2UalZpMltwvoIrGhJ0T2V+8b0MV5wD+cmf0PPdHGA==
+  dependencies:
+    "@tanstack/query-devtools" "5.28.6"
+
+"@tanstack/react-query@^5.28.8":
+  version "5.28.8"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.28.8.tgz#8afc45057f0d8f0b9ba78093e749dc3b4ee5a7a4"
+  integrity sha512-4XYhoRmcThqziB32HsyiBLNXJcukaeGfYwAQ+fZqUUE3ZP4oB/Zy41UJdql+TUg98+vsezfbixxAwAbGHfc5Hg==
+  dependencies:
+    "@tanstack/query-core" "5.28.8"
+
 "@tanstack/react-table@^8.10.7":
   version "8.15.0"
   resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.15.0.tgz#668ceb9f396d33409165d5b9bee7734b657061c6"
@@ -3024,10 +3048,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-next-themes@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.2.1.tgz#0c9f128e847979daf6c67f70b38e6b6567856e45"
-  integrity sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==
+next-themes@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.3.0.tgz#b4d2a866137a67d42564b07f3a3e720e2ff3871a"
+  integrity sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==
 
 next@^14.1.4:
   version "14.1.4"
@@ -3735,6 +3759,11 @@ slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+
+sonner@^1.4.41:
+  version "1.4.41"
+  resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.4.41.tgz#ff085ae4f4244713daf294959beaa3e90f842d2c"
+  integrity sha512-uG511ggnnsw6gcn/X+YKkWPo5ep9il9wYi3QJxHsYe7yTZ4+cOd1wuodOUmOpFuXL+/RE3R04LczdNCDygTDgQ==
 
 source-map-js@^1.0.2, source-map-js@^1.2.0:
   version "1.2.0"

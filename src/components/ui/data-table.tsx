@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -30,12 +31,17 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
+  query,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    // manualPagination: true,
+    // pageCount: -1,
+    // initialState: { pageIndex: 0 },
   });
 
   /* this can be used to get the selectedrows 
@@ -63,7 +69,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -82,7 +88,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -111,16 +117,22 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              query.fetchPreviousPage();
+              table.previousPage();
+            }}
+            disabled={!query.hasPreviousPage}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              query.fetchNextPage();
+              table.nextPage();
+            }}
+            disabled={!query.hasNextPage}
           >
             Next
           </Button>
