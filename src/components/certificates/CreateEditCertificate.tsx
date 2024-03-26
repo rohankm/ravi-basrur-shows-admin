@@ -35,87 +35,94 @@ import { useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
 
 const formSchema = z.object({
-  name: z.string().min(3),
+  name: z.string().min(1),
 });
 
-type GenreType = z.infer<typeof formSchema>;
+type CertificateType = z.infer<typeof formSchema>;
 
-export function CreateEditGenre({
+export function CreateEditCertificate({
   open = false,
-  editGenreId,
+  editCertificateId,
 }: {
   open: boolean;
-  editGenreId?: string | null | undefined;
+  editCertificateId?: string | null | undefined;
 }) {
-  const edit = !!editGenreId;
+  const edit = !!editCertificateId;
   const rotuer = useRouter();
   const mutate = useMutationData();
   const defaultValues = {
     name: "",
   };
 
-  const form = useForm<GenreType>({
+  const form = useForm<CertificateType>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const genre = useFetchData({
-    query: supabase.from("genres").select().match({ id: editGenreId }).single(),
+  const certificate = useFetchData({
+    query: supabase
+      .from("certificates")
+      .select()
+      .match({ id: editCertificateId })
+      .single(),
     options: {
       enabled: edit,
     },
   });
 
-  console.log(genre.data);
+  console.log(certificate.data);
   useEffect(() => {
-    if (genre.data) form.reset(genre.data);
-  }, [genre.data]);
+    if (certificate.data) form.reset(certificate.data);
+  }, [certificate.data]);
 
   const onClose = () => {
     form.reset(defaultValues);
     rotuer.back();
   };
 
-  const onSubmit = async (data: GenreType) => {
+  const onSubmit = async (data: CertificateType) => {
     console.log(data);
     try {
-      const rsp = await mutate.mutateAsync({
-        query: supabase.from("genres").insert({ name: data.name }).select(),
-      });
-
-      console.log(rsp);
-
-      if (rsp.data) {
-        toast("Genre has been created.");
-
-        onClose();
-      }
-    } catch (err) {
-      toast.error("Error Adding Genre");
-    }
-  };
-
-  const onSubmitEdit = async (data: GenreType) => {
-    console.log(data);
-    try {
-      if (!genre.data) return;
       const rsp = await mutate.mutateAsync({
         query: supabase
-          .from("genres")
-          .update({ name: data.name })
-          .match({ id: genre.data.id })
+          .from("certificates")
+          .insert({ name: data.name })
           .select(),
       });
 
       console.log(rsp);
 
       if (rsp.data) {
-        toast("Genre has been updated.");
+        toast("Certificate has been created.");
 
         onClose();
       }
     } catch (err) {
-      toast.error("Error updating genre");
+      toast.error("Error Adding Certificate");
+    }
+  };
+
+  const onSubmitEdit = async (data: CertificateType) => {
+    console.log(data);
+    try {
+      if (!certificate.data) return;
+      const rsp = await mutate.mutateAsync({
+        query: supabase
+          .from("certificates")
+          .update({ name: data.name })
+          .match({ id: certificate.data.id })
+          .select(),
+      });
+
+      console.log(rsp);
+
+      if (rsp.data) {
+        toast("Certificate has been updated.");
+
+        onClose();
+      }
+    } catch (err) {
+      toast.error("Error updating certificate");
     }
   };
 
@@ -123,12 +130,16 @@ export function CreateEditGenre({
     <Dialog open={open}>
       <DialogContent className="sm:max-w-md" onClose={onClose}>
         <DialogHeader>
-          <DialogTitle>{edit ? "Edit Genre" : "Add Genre"}</DialogTitle>
-          <DialogDescription>Add new genre to the list</DialogDescription>
+          <DialogTitle>
+            {edit ? "Edit Certificate" : "Add Certificate"}
+          </DialogTitle>
+          <DialogDescription>Add new certificate to the list</DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
-          {edit && genre.isLoading && <Skeleton className="w-full h-20" />}
-          {!genre.isLoading && (
+          {edit && certificate.isLoading && (
+            <Skeleton className="w-full h-20" />
+          )}
+          {!certificate.isLoading && (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(edit ? onSubmitEdit : onSubmit)}
@@ -139,7 +150,7 @@ export function CreateEditGenre({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Genre name</FormLabel>
+                      <FormLabel>Certificate name</FormLabel>
                       <FormControl>
                         <Input
                           type="text"

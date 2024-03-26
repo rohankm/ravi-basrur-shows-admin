@@ -106,7 +106,7 @@ export function CreateEditLanguage({
         onClose();
       }
     } catch (err) {
-      toast("Error Adding Language");
+      toast.error("Error Adding Language");
     }
   };
 
@@ -134,7 +134,7 @@ export function CreateEditLanguage({
         onClose();
       }
     } catch (err) {
-      toast("Error Adding Language");
+      toast.error("Error updating language");
     }
   };
 

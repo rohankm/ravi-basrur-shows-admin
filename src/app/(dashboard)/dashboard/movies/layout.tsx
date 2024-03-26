@@ -1,5 +1,6 @@
 "use client";
 
+import { CreateEditCertificate } from "@/components/certificates/CreateEditCertificate";
 import { CreateEditGenre } from "@/components/genres/CreateEditGenre";
 import { CreateEditLanguage } from "@/components/languages/CreateEditLanguages";
 import type { Metadata } from "next";
@@ -17,6 +18,9 @@ export default function DashboardLayout({
   const newLanguage = !!searchParams.get("new_language");
   const editLanguage = searchParams.get("edit_language");
 
+  const newCertificate = !!searchParams.get("new_certificate");
+  const editCertificate = searchParams.get("edit_certificate");
+
   return (
     <>
       {children}
@@ -24,6 +28,10 @@ export default function DashboardLayout({
       <CreateEditLanguage
         open={newLanguage || !!editLanguage}
         editLanguageId={editLanguage}
+      />
+      <CreateEditCertificate
+        open={newCertificate || !!editCertificate}
+        editCertificateId={editCertificate}
       />
     </>
   );
