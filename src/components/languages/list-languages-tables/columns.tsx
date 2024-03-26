@@ -5,7 +5,7 @@ import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tables } from "@/types/database.types";
 
-export const columns: ColumnDef<Tables<"genres">>[] = [
+export const columns: ColumnDef<Tables<"languages">>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -27,9 +27,16 @@ export const columns: ColumnDef<Tables<"genres">>[] = [
   },
   {
     accessorKey: "name",
-    header: "NAME",
+    header: "Name",
   },
-
+  {
+    accessorKey: "native_name",
+    header: "Native Name",
+  },
+  {
+    accessorKey: "code",
+    header: "Code",
+  },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

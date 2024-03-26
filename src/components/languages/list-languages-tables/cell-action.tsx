@@ -18,7 +18,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface CellActionProps {
-  data: Tables<"genres">;
+  data: Tables<"languages">;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -33,7 +33,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     try {
       const rsp = await mutate.mutateAsync({
         query: supabase
-          .from("genres")
+          .from("languages")
           .delete()
           .match({
             id: data.id,
@@ -42,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         deleteId: data.id,
       });
 
-      toast("Genre deleted successfully.");
+      toast("Language deleted successfully.");
       setOpen(false);
     } catch (err) {
       toast.error("Something Went Wrong.");
@@ -57,7 +57,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={loading}
-        title={`Are you sure you want to delete Genre ${data.name}?`}
+        title={`Are you sure you want to delete Language ${data.name}?`}
         description="This Cannot Be Undone"
       />
       <DropdownMenu modal={false}>
@@ -71,7 +71,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(pathName + "?edit_genre=" + data.id)}
+            onClick={() => router.push(pathName + "?edit_language=" + data.id)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

@@ -24,6 +24,7 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  ScrollText,
   Settings,
   SunMedium,
   Trash,
@@ -66,6 +67,7 @@ export const Icons = {
   clapperboard: Clapperboard,
   "book-a": BookA,
   drama: Drama,
+  "scroll-text": ScrollText,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

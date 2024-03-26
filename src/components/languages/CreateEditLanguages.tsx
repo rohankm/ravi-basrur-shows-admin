@@ -36,86 +36,105 @@ import { Skeleton } from "../ui/skeleton";
 
 const formSchema = z.object({
   name: z.string().min(3),
+  native_name: z.string().min(1),
+  code: z.string().length(2),
 });
 
-type GenreType = z.infer<typeof formSchema>;
+type LanguagesType = z.infer<typeof formSchema>;
 
-export function CreateEditGenre({
+export function CreateEditLanguage({
   open = false,
-  editGenreId,
+  editLanguageId,
 }: {
   open: boolean;
-  editGenreId?: string | null | undefined;
+  editLanguageId?: string | null | undefined;
 }) {
-  const edit = !!editGenreId;
+  const edit = !!editLanguageId;
   const rotuer = useRouter();
   const mutate = useMutationData();
   const defaultValues = {
     name: "",
+    native_name: "",
+    code: "",
   };
 
-  const form = useForm<GenreType>({
+  const form = useForm<LanguagesType>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const genre = useFetchData({
-    query: supabase.from("genres").select().match({ id: editGenreId }).single(),
+  const language = useFetchData({
+    query: supabase
+      .from("languages")
+      .select()
+      .match({ id: editLanguageId })
+      .single(),
     options: {
       enabled: edit,
     },
   });
 
-  console.log(genre.data);
+  console.log(language.data);
   useEffect(() => {
-    if (genre.data) form.reset(genre.data);
-  }, [genre.data]);
+    if (language.data) form.reset(language.data);
+  }, [language.data]);
 
   const onClose = () => {
     form.reset(defaultValues);
     rotuer.back();
   };
 
-  const onSubmit = async (data: GenreType) => {
+  const onSubmit = async (data: LanguagesType) => {
     console.log(data);
     try {
-      const rsp = await mutate.mutateAsync({
-        query: supabase.from("genres").insert({ name: data.name }).select(),
-      });
-
-      console.log(rsp);
-
-      if (rsp.data) {
-        toast("Genre has been created.");
-
-        onClose();
-      }
-    } catch (err) {
-      toast("Error Adding Genre");
-    }
-  };
-
-  const onSubmitEdit = async (data: GenreType) => {
-    console.log(data);
-    try {
-      if (!genre.data) return;
       const rsp = await mutate.mutateAsync({
         query: supabase
-          .from("genres")
-          .update({ name: data.name })
-          .match({ id: genre.data.id })
+          .from("languages")
+          .insert({
+            name: data.name,
+            code: data.code,
+            native_name: data.native_name,
+          })
           .select(),
       });
 
       console.log(rsp);
 
       if (rsp.data) {
-        toast("Genre has been created.");
+        toast("Language has been created.");
 
         onClose();
       }
     } catch (err) {
-      toast("Error Adding Genre");
+      toast("Error Adding Language");
+    }
+  };
+
+  const onSubmitEdit = async (data: LanguagesType) => {
+    console.log(data);
+    try {
+      if (!language.data) return;
+      const rsp = await mutate.mutateAsync({
+        query: supabase
+          .from("languages")
+          .update({
+            name: data.name,
+            code: data.code,
+            native_name: data.native_name,
+          })
+          .match({ id: language.data.id })
+          .select(),
+      });
+
+      console.log(rsp);
+
+      if (rsp.data) {
+        toast("Language has been created.");
+
+        onClose();
+      }
+    } catch (err) {
+      toast("Error Adding Language");
     }
   };
 
@@ -123,12 +142,12 @@ export function CreateEditGenre({
     <Dialog open={open}>
       <DialogContent className="sm:max-w-md" onClose={onClose}>
         <DialogHeader>
-          <DialogTitle>{edit ? "Edit Genre" : "Add Genre"}</DialogTitle>
-          <DialogDescription>Add new genre to the list</DialogDescription>
+          <DialogTitle>{edit ? "Edit Language" : "Add Language"}</DialogTitle>
+          <DialogDescription>Add new language to the list</DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
-          {edit && genre.isLoading && <Skeleton className="w-full h-20" />}
-          {!genre.isLoading && (
+          {edit && language.isLoading && <Skeleton className="w-full h-20" />}
+          {!language.isLoading && (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(edit ? onSubmitEdit : onSubmit)}
@@ -139,7 +158,45 @@ export function CreateEditGenre({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Genre name</FormLabel>
+                      <FormLabel>Language name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Type here..."
+                          disabled={form.formState.isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="native_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Native Language name</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Type here..."
+                          disabled={form.formState.isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Language Code</FormLabel>
                       <FormControl>
                         <Input
                           type="text"

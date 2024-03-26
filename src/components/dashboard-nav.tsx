@@ -54,6 +54,11 @@ const NAV_ITEMS: NavItem[] = [
         icon: "book-a",
         href: "/dashboard/movies/languages",
       },
+      {
+        title: "Certificates",
+        icon: "scroll-text",
+        href: "/dashboard/movies/certificates",
+      },
     ],
   },
 ];

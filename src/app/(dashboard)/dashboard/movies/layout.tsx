@@ -1,6 +1,7 @@
 "use client";
 
-import { CreateEdit } from "@/components/genres/CreateEditGenre";
+import { CreateEditGenre } from "@/components/genres/CreateEditGenre";
+import { CreateEditLanguage } from "@/components/languages/CreateEditLanguages";
 import type { Metadata } from "next";
 import { redirect, useSearchParams } from "next/navigation";
 
@@ -13,10 +14,17 @@ export default function DashboardLayout({
   const newGenre = !!searchParams.get("new_genre");
   const editGenre = searchParams.get("edit_genre");
 
+  const newLanguage = !!searchParams.get("new_language");
+  const editLanguage = searchParams.get("edit_language");
+
   return (
     <>
       {children}
-      <CreateEdit open={newGenre || !!editGenre} editGenreId={editGenre} />
+      <CreateEditGenre open={newGenre || !!editGenre} editGenreId={editGenre} />
+      <CreateEditLanguage
+        open={newLanguage || !!editLanguage}
+        editLanguageId={editLanguage}
+      />
     </>
   );
 }

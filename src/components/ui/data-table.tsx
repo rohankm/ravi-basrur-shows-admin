@@ -34,13 +34,14 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { supabase } from "@/lib/supabase/client";
 import { Skeleton } from "./skeleton";
+import { Database } from "@/types/database.types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[];
   searchKey: string;
 
-  tableName?: string;
+  tableName?: keyof Database["public"]["Tables"];
 }
 
 export function DataTable<TData, TValue>({
