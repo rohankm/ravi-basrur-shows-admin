@@ -70,7 +70,10 @@ export default function UppyComponent({
 
   if (typeof field.value == "string" && field.value !== "" && !img.isError) {
     return (
-      <div className="bg-slate-200 dark:bg-slate-800 flex justify-center items-center gap-5 p-5">
+      <div
+        className=" flex justify-center items-center gap-5 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50
+      "
+      >
         {img.url && (
           <img src={img.url} className=" w-[100px] h-full object-cover" />
         )}

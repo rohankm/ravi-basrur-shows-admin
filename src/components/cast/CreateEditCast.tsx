@@ -39,8 +39,7 @@ import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { Textarea } from "../ui/textarea";
 import UppyComponent from "../ui/UppyComponent";
-import useUploadToStorage from "@/hooks/supabase/uploadToStorage";
-import Uppy from "@uppy/core";
+
 import useUpsertToStorage from "@/hooks/supabase/upsertToStorage";
 const formSchema = z.object({
   first_name: z.string().min(1),
@@ -49,10 +48,14 @@ const formSchema = z.object({
   birth_date: z.date({
     required_error: "A date of birth is required.",
   }),
-  profile_picture: z.union([
-    z.string(), // For URLs
-    z.any(), // For File objects
-  ]),
+  profile_picture: z
+    .union([
+      z.string(), // For URLs
+      z.any(), // For File objects
+    ])
+    .refine((val) => val == null, {
+      message: "A profile picture is required",
+    }),
 });
 
 type CastType = z.infer<typeof formSchema>;
@@ -94,8 +97,10 @@ export function CreateEditCast({
   useEffect(() => {
     console.log("CALLED", cast.data);
     if (cast.data)
-      //@ts-ignore
-      form.reset({ ...cast.data, birth_date: new Date(cast.data.birth_date) });
+      form.reset({
+        ...cast.data,
+        birth_date: new Date(cast?.data?.birth_date ?? ""),
+      });
     else form.reset(defaultValues);
   }, [cast.data]);
 

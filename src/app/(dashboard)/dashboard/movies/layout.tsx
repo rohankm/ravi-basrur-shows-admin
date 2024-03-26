@@ -4,6 +4,7 @@ import { CreateEditCast } from "@/components/cast/CreateEditCast";
 import { CreateEditCertificate } from "@/components/certificates/CreateEditCertificate";
 import { CreateEditGenre } from "@/components/genres/CreateEditGenre";
 import { CreateEditLanguage } from "@/components/languages/CreateEditLanguages";
+import { CreateEditCastRole } from "@/components/movies/cast_roles/CreateEditCastRole";
 import type { Metadata } from "next";
 import { redirect, useSearchParams } from "next/navigation";
 
@@ -25,6 +26,9 @@ export default function DashboardLayout({
   const newCast = !!searchParams.get("new_cast");
   const editCast = searchParams.get("edit_cast");
 
+  const newCastRole = !!searchParams.get("new_cast_role");
+  const editCastRole = searchParams.get("edit_cast_role");
+
   return (
     <>
       {children}
@@ -38,6 +42,10 @@ export default function DashboardLayout({
         editCertificateId={editCertificate}
       />
       <CreateEditCast open={newCast || !!editCast} editCastId={editCast} />
+      <CreateEditCastRole
+        open={newCastRole || !!editCastRole}
+        editCastRoleId={editCastRole}
+      />
     </>
   );
 }

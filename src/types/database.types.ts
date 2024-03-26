@@ -88,6 +88,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      cast_roles: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       certificates: {
         Row: {
           created_at: string;
@@ -242,7 +263,7 @@ export type Database = {
             foreignKeyName: "movie_cast_role_id_fkey";
             columns: ["role_id"];
             isOneToOne: false;
-            referencedRelation: "roles";
+            referencedRelation: "cast_roles";
             referencedColumns: ["id"];
           }
         ];
@@ -487,6 +508,7 @@ export type Database = {
           created_at: string;
           description: string | null;
           id: string;
+          is_draft: boolean | null;
           is_released: boolean | null;
           release_year: number | null;
           scheduled_release: string | null;
@@ -497,6 +519,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          is_draft?: boolean | null;
           is_released?: boolean | null;
           release_year?: number | null;
           scheduled_release?: string | null;
@@ -507,6 +530,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           id?: string;
+          is_draft?: boolean | null;
           is_released?: boolean | null;
           release_year?: number | null;
           scheduled_release?: string | null;
@@ -659,27 +683,6 @@ export type Database = {
             referencedColumns: ["id"];
           }
         ];
-      };
-      roles: {
-        Row: {
-          created_at: string;
-          id: string;
-          name: string;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          name: string;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          name?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
       };
       tv_shows: {
         Row: {

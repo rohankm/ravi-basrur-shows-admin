@@ -15,7 +15,7 @@ export default function useFetchStorage({
   const { user } = useUserDetails();
 
   // console.log(url, typeof url == "string");
-  const file = url;
+  const file = url ?? "";
 
   //   console.log(file);
   const queryKey = ["storage", file];
