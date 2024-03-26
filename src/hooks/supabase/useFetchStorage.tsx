@@ -6,18 +6,16 @@ import React, { useEffect, useState } from "react";
 export default function useFetchStorage({
   url,
   userImage = false,
+  bucket,
 }: {
   url: string | null | undefined;
   userImage?: boolean;
+  bucket: string;
 }) {
   const { user } = useUserDetails();
 
   // console.log(url, typeof url == "string");
-  const file = userImage
-    ? user?.id + "/" + url?.split("/").pop()
-    : user?.id +
-      "/projects" +
-      (typeof url == "string" ? url?.split("projects")?.[1] : "");
+  const file = url;
 
   //   console.log(file);
   const queryKey = ["storage", file];
@@ -29,7 +27,7 @@ export default function useFetchStorage({
         throw "Url not specified";
       }
       const { data, error } = await supabase.storage
-        .from("project")
+        .from(bucket)
         .createSignedUrl(file, 60 * 5, {
           transform: {
             width: 500,
@@ -45,24 +43,6 @@ export default function useFetchStorage({
     refetchInterval: 1000 * 60 * 5,
     enabled: !!url,
   });
-
-  //   useEffect(() => {
-  //     const getFile = async () => {
-  //       console.log(file);
-  //       const { data, error } = await supabase.storage
-  //         .from("project")
-  //         .createSignedUrl(file, 60 * 5);
-
-  //       console.log(data, error);
-  //       if (data) {
-  //         setImg(data.signedUrl);
-  //       }
-  //       if (error) {
-  //         setError(true);
-  //       }
-  //     };
-  //     if (url && user) getFile();
-  //   }, [url, user]);
 
   return { url: data?.signedUrl, ...rest };
 }

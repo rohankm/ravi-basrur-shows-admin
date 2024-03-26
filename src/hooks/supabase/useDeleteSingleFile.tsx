@@ -4,28 +4,25 @@ import { UppyFile } from "@uppy/core";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export default function useUploadToStorage() {
-  const upload = async ({
-    image,
-    parentPath = "",
+export default function useDeleteSingleFile() {
+  const deleteSingleFile = async ({
+    fileUrl,
     bucket,
   }: {
-    image: UppyFile<Record<string, unknown>>;
-    parentPath?: string;
+    fileUrl: string | null;
     bucket: string;
   }) => {
-    const id = uuidv4();
-    const path = parentPath + "/" + id + `.${image.extension}`;
+    if (!fileUrl) return true;
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(path, image.data, { contentType: image.meta.type });
+      .remove([fileUrl]);
     if (error) {
-      throw "Image upload failed";
+      throw "Image delete failed";
     }
     if (data) {
-      return data.path;
+      return true;
     }
   };
 
-  return upload;
+  return deleteSingleFile;
 }

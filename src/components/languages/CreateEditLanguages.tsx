@@ -77,6 +77,7 @@ export function CreateEditLanguage({
   console.log(language.data);
   useEffect(() => {
     if (language.data) form.reset(language.data);
+    else form.reset(defaultValues);
   }, [language.data]);
 
   const onClose = () => {

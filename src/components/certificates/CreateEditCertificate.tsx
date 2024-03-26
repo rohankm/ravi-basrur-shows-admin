@@ -73,6 +73,7 @@ export function CreateEditCertificate({
   console.log(certificate.data);
   useEffect(() => {
     if (certificate.data) form.reset(certificate.data);
+    else form.reset(defaultValues);
   }, [certificate.data]);
 
   const onClose = () => {

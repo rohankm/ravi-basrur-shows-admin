@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log({ resultData });
+  console.log({ tableName, resultData });
 
   // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({

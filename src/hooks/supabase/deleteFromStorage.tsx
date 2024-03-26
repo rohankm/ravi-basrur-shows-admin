@@ -1,7 +1,7 @@
 import { useUserDetails } from "@/components/layout/Providers/UserDetailsContextProvider";
 import { supabase } from "@/lib/supabase/client";
 
-export default function deleteFromStorage() {
+export default function useDeleteFromStorage() {
   const { user } = useUserDetails();
 
   const getAllFiles = async (bucket = "project", baseUrl: string) => {

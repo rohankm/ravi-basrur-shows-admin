@@ -1,5 +1,6 @@
 "use client";
 
+import { CreateEditCast } from "@/components/cast/CreateEditCast";
 import { CreateEditCertificate } from "@/components/certificates/CreateEditCertificate";
 import { CreateEditGenre } from "@/components/genres/CreateEditGenre";
 import { CreateEditLanguage } from "@/components/languages/CreateEditLanguages";
@@ -21,6 +22,9 @@ export default function DashboardLayout({
   const newCertificate = !!searchParams.get("new_certificate");
   const editCertificate = searchParams.get("edit_certificate");
 
+  const newCast = !!searchParams.get("new_cast");
+  const editCast = searchParams.get("edit_cast");
+
   return (
     <>
       {children}
@@ -33,6 +37,7 @@ export default function DashboardLayout({
         open={newCertificate || !!editCertificate}
         editCertificateId={editCertificate}
       />
+      <CreateEditCast open={newCast || !!editCast} editCastId={editCast} />
     </>
   );
 }

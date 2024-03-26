@@ -69,6 +69,7 @@ export function CreateEditGenre({
   console.log(genre.data);
   useEffect(() => {
     if (genre.data) form.reset(genre.data);
+    else form.reset(defaultValues);
   }, [genre.data]);
 
   const onClose = () => {

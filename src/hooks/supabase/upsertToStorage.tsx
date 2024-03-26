@@ -4,22 +4,29 @@ import { UppyFile } from "@uppy/core";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export default function useUploadToStorage() {
-  const upload = async ({
+export default function useUpsertToStorage() {
+  const upsert = async ({
     image,
-    parentPath = "",
+    originalImage,
     bucket,
   }: {
-    image: UppyFile<Record<string, unknown>>;
-    parentPath?: string;
+    image: UppyFile<Record<string, unknown>> | string;
+    originalImage?: string | null;
     bucket: string;
   }) => {
+    if (typeof image == "string") {
+      return image;
+    }
     const id = uuidv4();
-    const path = parentPath + "/" + id + `.${image.extension}`;
+    const path = originalImage
+      ? originalImage
+      : +"/" + id + `.${image.extension}`;
+
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(path, image.data, { contentType: image.meta.type });
+      .upload(path, image.data, { contentType: image.meta.type, upsert: true });
     if (error) {
+      console.log({ error });
       throw "Image upload failed";
     }
     if (data) {
@@ -27,5 +34,5 @@ export default function useUploadToStorage() {
     }
   };
 
-  return upload;
+  return upsert;
 }
