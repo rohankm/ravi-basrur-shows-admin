@@ -1,10 +1,10 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { Cast } from "@/components/cast/list-cast-tables/client";
+import { Cast } from "@/components/movies/cast/list-cast-tables/client";
 
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "Movies", link: "/movies" },
+  { title: "Movies", link: "/dashboard/movies" },
   { title: "Cast", link: "/movies/cast" },
 ];
 export default function page() {

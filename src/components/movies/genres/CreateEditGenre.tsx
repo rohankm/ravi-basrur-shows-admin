@@ -26,101 +26,97 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "../../ui/scroll-area";
 import { supabase } from "@/lib/supabase/client";
 import useMutationData from "@/hooks/supabase/useMutationData";
 import { toast } from "sonner";
 import useFetchData from "@/hooks/supabase/useFetchData";
 import { useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 const formSchema = z.object({
   name: z.string().min(3),
 });
 
-type CastRoleType = z.infer<typeof formSchema>;
+type GenreType = z.infer<typeof formSchema>;
 
-export function CreateEditCastRole({
+export function CreateEditGenre({
   open = false,
-  editCastRoleId,
+  editGenreId,
 }: {
   open: boolean;
-  editCastRoleId?: string | null | undefined;
+  editGenreId?: string | null | undefined;
 }) {
-  const edit = !!editCastRoleId;
+  const edit = !!editGenreId;
   const rotuer = useRouter();
   const mutate = useMutationData();
   const defaultValues = {
     name: "",
   };
 
-  const form = useForm<CastRoleType>({
+  const form = useForm<GenreType>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const castRole = useFetchData({
-    query: supabase
-      .from("cast_roles")
-      .select()
-      .match({ id: editCastRoleId })
-      .single(),
+  const genre = useFetchData({
+    query: supabase.from("genres").select().match({ id: editGenreId }).single(),
     options: {
       enabled: edit,
     },
   });
 
-  console.log(castRole.data);
+  console.log(genre.data);
   useEffect(() => {
-    if (castRole.data) form.reset(castRole.data);
+    if (genre.data) form.reset(genre.data);
     else form.reset(defaultValues);
-  }, [castRole.data]);
+  }, [genre.data]);
 
   const onClose = () => {
     form.reset(defaultValues);
     rotuer.back();
   };
 
-  const onSubmit = async (data: CastRoleType) => {
+  const onSubmit = async (data: GenreType) => {
     console.log(data);
     try {
       const rsp = await mutate.mutateAsync({
-        query: supabase.from("cast_roles").insert({ name: data.name }).select(),
+        query: supabase.from("genres").insert({ name: data.name }).select(),
       });
 
       console.log(rsp);
 
       if (rsp.data) {
-        toast("Cast Role has been created.");
+        toast("Genre has been created.");
 
         onClose();
       }
     } catch (err) {
-      toast.error("Error Adding Cast Role");
+      toast.error("Error Adding Genre");
     }
   };
 
-  const onSubmitEdit = async (data: CastRoleType) => {
+  const onSubmitEdit = async (data: GenreType) => {
     console.log(data);
     try {
-      if (!castRole.data) return;
+      if (!genre.data) return;
       const rsp = await mutate.mutateAsync({
         query: supabase
-          .from("cast_roles")
+          .from("genres")
           .update({ name: data.name })
-          .match({ id: castRole.data.id })
+          .match({ id: genre.data.id })
           .select(),
       });
 
       console.log(rsp);
 
       if (rsp.data) {
-        toast("Cast Role has been updated.");
+        toast("Genre has been updated.");
 
         onClose();
       }
     } catch (err) {
-      toast.error("Error updating Cast Role");
+      toast.error("Error updating genre");
     }
   };
 
@@ -128,12 +124,12 @@ export function CreateEditCastRole({
     <Dialog open={open}>
       <DialogContent className="sm:max-w-md" onClose={onClose}>
         <DialogHeader>
-          <DialogTitle>{edit ? "Edit Cast Role" : "Add Cast Role"}</DialogTitle>
-          <DialogDescription>Add new Cast Role to the list</DialogDescription>
+          <DialogTitle>{edit ? "Edit Genre" : "Add Genre"}</DialogTitle>
+          <DialogDescription>Add new genre to the list</DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
-          {edit && castRole.isLoading && <Skeleton className="w-full h-20" />}
-          {!castRole.isLoading && (
+          {edit && genre.isLoading && <Skeleton className="w-full h-20" />}
+          {!genre.isLoading && (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(edit ? onSubmitEdit : onSubmit)}
@@ -144,7 +140,7 @@ export function CreateEditCastRole({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cast role name</FormLabel>
+                      <FormLabel>Genre name</FormLabel>
                       <FormControl>
                         <Input
                           type="text"

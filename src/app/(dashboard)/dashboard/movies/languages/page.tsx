@@ -1,10 +1,10 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { Languages } from "@/components/languages/list-languages-tables/client";
+import { Languages } from "@/components/movies/languages/list-languages-tables/client";
 
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "Movies", link: "/movies" },
+  { title: "Movies", link: "/dashboard/movies" },
   { title: "Languages", link: "/movies/languages" },
 ];
 export default function page() {

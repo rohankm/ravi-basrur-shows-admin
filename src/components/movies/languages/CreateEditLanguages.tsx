@@ -26,13 +26,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "../../ui/scroll-area";
 import { supabase } from "@/lib/supabase/client";
 import useMutationData from "@/hooks/supabase/useMutationData";
 import { toast } from "sonner";
 import useFetchData from "@/hooks/supabase/useFetchData";
 import { useEffect } from "react";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 const formSchema = z.object({
   name: z.string().min(3),

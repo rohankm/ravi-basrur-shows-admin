@@ -26,19 +26,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "../../ui/scroll-area";
 import { supabase } from "@/lib/supabase/client";
 import useMutationData from "@/hooks/supabase/useMutationData";
 import { toast } from "sonner";
 import useFetchData from "@/hooks/supabase/useFetchData";
 import { useEffect } from "react";
-import { Skeleton } from "../ui/skeleton";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Skeleton } from "../../ui/skeleton";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { cn } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
+import { Calendar } from "../../ui/calendar";
 import { format } from "date-fns";
-import { Textarea } from "../ui/textarea";
-import UppyComponent from "../ui/UppyComponent";
+import { Textarea } from "../../ui/textarea";
+import UppyComponent from "../../ui/UppyComponent";
 
 import useUpsertToStorage from "@/hooks/supabase/upsertToStorage";
 const formSchema = z.object({
@@ -48,14 +48,10 @@ const formSchema = z.object({
   birth_date: z.date({
     required_error: "A date of birth is required.",
   }),
-  profile_picture: z
-    .union([
-      z.string(), // For URLs
-      z.any(), // For File objects
-    ])
-    .refine((val) => val == null, {
-      message: "A profile picture is required",
-    }),
+  profile_picture: z.union([
+    z.string(), // For URLs
+    z.any(), // For File objects
+  ]),
 });
 
 type CastType = z.infer<typeof formSchema>;
@@ -263,7 +259,7 @@ export function CreateEditCast({
                     render={({ field }) => (
                       <FormItem className="flex flex-col ">
                         <FormLabel className="mt-2">Date of birth</FormLabel>
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
@@ -285,6 +281,7 @@ export function CreateEditCast({
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
+                              captionLayout="dropdown-buttons"
                               selected={field.value}
                               onSelect={field.onChange}
                               disabled={(date) =>
@@ -292,6 +289,8 @@ export function CreateEditCast({
                                 date < new Date("1900-01-01")
                               }
                               initialFocus
+                              fromYear={1960}
+                              toYear={2030}
                             />
                           </PopoverContent>
                         </Popover>

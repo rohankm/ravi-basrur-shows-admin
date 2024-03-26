@@ -1,10 +1,10 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { Certificates } from "@/components/certificates/list-certificates-tables/client";
+import { Certificates } from "@/components/movies/certificates/list-certificates-tables/client";
 
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "Movies", link: "/movies" },
+  { title: "Movies", link: "/dashboard/movies" },
   { title: "Certificates", link: "/movies/certificates" },
 ];
 export default function page() {

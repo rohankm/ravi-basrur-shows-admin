@@ -1,11 +1,11 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { AddGenre } from "@/components/genres/CreateEditGenre";
-import { Genres } from "@/components/genres/list-genres-tables/client";
-import { useSearchParams } from "next/navigation";
+
+import { Genres } from "@/components/movies/genres/list-genres-tables/client";
+
 import React from "react";
 
 const breadcrumbItems = [
-  { title: "Movies", link: "/movies" },
+  { title: "Movies", link: "/dashboard/movies" },
   { title: "Genres", link: "/movies/genres" },
 ];
 export default function page() {

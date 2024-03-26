@@ -1,12 +1,12 @@
 "use client";
 
-import { CreateEditCast } from "@/components/cast/CreateEditCast";
-import { CreateEditCertificate } from "@/components/certificates/CreateEditCertificate";
-import { CreateEditGenre } from "@/components/genres/CreateEditGenre";
-import { CreateEditLanguage } from "@/components/languages/CreateEditLanguages";
+import { CreateEditCertificate } from "@/components/movies/certificates/CreateEditCertificate";
+import { CreateEditGenre } from "@/components/movies/genres/CreateEditGenre";
+import { CreateEditLanguage } from "@/components/movies/languages/CreateEditLanguages";
 import { CreateEditCastRole } from "@/components/movies/cast_roles/CreateEditCastRole";
 import type { Metadata } from "next";
 import { redirect, useSearchParams } from "next/navigation";
+import { CreateEditCast } from "@/components/movies/cast/CreateEditCast";
 
 export default function DashboardLayout({
   children,
