@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
+import { AsyncSelect } from "@/components/ui/react-select";
 import {
   Select,
   SelectContent,
@@ -24,13 +25,75 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { profileSchema, type ProfileFormValues } from "@/lib/form-schema";
+import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangleIcon, Trash, Trash2Icon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+
+import * as z from "zod";
+
+export const CompleteMovieSchema = z.object({
+  title: z.string().min(3),
+  description: z.string().min(10),
+  release_year: z.string(),
+  scheduled_release: z.string(),
+  is_released: z.boolean(),
+
+  movie_languages: z.array(
+    z.object({
+      value: z.string().uuid(),
+      label: z.string(),
+    })
+  ),
+
+  movie_certificates: z.array(
+    z.object({
+      value: z.string().uuid(),
+      label: z.string(),
+    })
+  ),
+
+  movie_genres: z.array(
+    z.object({
+      value: z.string().uuid(),
+      label: z.string(),
+    })
+  ),
+
+  movie_cast: z.array(
+    z.object({
+      role_id: z.object({
+        value: z.string().uuid(),
+        label: z.string(),
+      }),
+      cast_ids: z.array(
+        z.object({
+          value: z.string().uuid(),
+          label: z.string(),
+        })
+      ),
+    })
+  ),
+
+  movie_posters: z.array(
+    z.object({
+      url: z.string(),
+      type: z.string(),
+    })
+  ),
+
+  movie_videos: z.array(
+    z.object({
+      url: z.string(),
+      type: z.string(),
+    })
+  ),
+});
+
+type CompleteMovie = z.infer<typeof CompleteMovieSchema>;
 
 interface ProfileFormType {
   initialData: any | null;
@@ -58,20 +121,16 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
   const delta = currentStep - previousStep;
 
   const defaultValues = {
-    jobs: [
+    movie_cast: [
       {
-        jobtitle: "",
-        employer: "",
-        startdate: "",
-        enddate: "",
-        jobcountry: "",
-        jobcity: "",
+        cast_id: "",
+        role_id: "",
       },
     ],
   };
 
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<CompleteMovie>({
+    resolver: zodResolver(CompleteMovieSchema),
     defaultValues,
     mode: "onChange",
   });
@@ -81,12 +140,21 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     formState: { errors },
   } = form;
 
-  const { append, remove, fields } = useFieldArray({
+  const movie_cast = useFieldArray({
     control,
-    name: "jobs",
+    name: "movie_cast",
   });
 
-  const onSubmit = async (data: ProfileFormValues) => {
+  const movie_posters = useFieldArray({
+    control,
+    name: "movie_posters",
+  });
+  const movie_videos = useFieldArray({
+    control,
+    name: "movie_videos",
+  });
+
+  const onSubmit = async (data: CompleteMovie) => {
     try {
       setLoading(true);
       if (initialData) {
@@ -116,45 +184,62 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     }
   };
 
-  const processForm: SubmitHandler<ProfileFormValues> = (data) => {
+  const processForm: SubmitHandler<CompleteMovie> = (data) => {
     console.log("data ==>", data);
     setData(data);
     // api call and reset
     // form.reset();
   };
 
-  type FieldName = keyof ProfileFormValues;
+  type FieldName = keyof CompleteMovie;
 
   const steps = [
     {
       id: "Step 1",
-      name: "Personal Information",
+      name: "Basic Information",
       fields: [
-        "firstname",
-        "lastname",
-        "email",
-        "contactno",
-        "country",
-        "city",
+        "title",
+        "description",
+        "release_year",
+        "scheduled_release",
+        // "is_released",
+        "movie_languages",
+        "movie_certificates",
+        "movie_genres",
       ],
     },
     {
       id: "Step 2",
-      name: "Professional Informations",
+      name: "Add Cast",
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: fields
+      fields: movie_cast.fields
         ?.map((_, index) => [
-          `jobs.${index}.jobtitle`,
-          `jobs.${index}.employer`,
-          `jobs.${index}.startdate`,
-          `jobs.${index}.enddate`,
-          `jobs.${index}.jobcountry`,
-          `jobs.${index}.jobcity`,
+          `movie_cast.${index}.cast_ids`,
+          `movie_cast.${index}.role_id`,
           // Add other field names as needed
         ])
         .flat(),
     },
-    { id: "Step 3", name: "Complete" },
+    {
+      id: "Step 3",
+      name: "Media",
+      // fields: [
+      //   movie_posters.fields
+      //     ?.map((_, index) => [
+      //       `movie_posters.${index}.url`,
+      //       `movie_posters.${index}.type`,
+      //       // Add other field names as needed
+      //     ])
+      //     .flat(),
+      //   movie_videos.fields
+      //     ?.map((_, index) => [
+      //       `movie_videos.${index}.url`,
+      //       `movie_videos.${index}.type`,
+      //       // Add other field names as needed
+      //     ])
+      //     .flat(),
+      // ],
+    },
   ];
 
   const next = async () => {
@@ -182,13 +267,11 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     }
   };
 
-  const countries = [{ id: "wow", name: "india" }];
-  const cities = [{ id: "2", name: "kerala" }];
-
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
+
         {initialData && (
           <Button
             disabled={loading}
@@ -244,21 +327,21 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
             className={cn(
               currentStep === 1
                 ? "md:inline-block w-full"
-                : "md:grid md:grid-cols-3 gap-8",
+                : "md:grid md:grid-cols-3 gap-8"
             )}
           >
             {currentStep === 0 && (
               <>
                 <FormField
                   control={form.control}
-                  name="firstname"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="John"
+                          placeholder="Movie Title"
                           {...field}
                         />
                       </FormControl>
@@ -268,14 +351,14 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                 />
                 <FormField
                   control={form.control}
-                  name="lastname"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel>Movie Description</FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Doe"
+                          placeholder="Movie Description"
                           {...field}
                         />
                       </FormControl>
@@ -285,16 +368,12 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                 />
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="release_year"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Release Date</FormLabel>
                       <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="johndoe@gmail.com"
-                          {...field}
-                        />
+                        <Input disabled={loading} type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -302,93 +381,176 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                 />
                 <FormField
                   control={form.control}
-                  name="contactno"
+                  name="scheduled_release"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact Number</FormLabel>
+                      <FormLabel>Scheduled Release Date</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter you contact number"
-                          disabled={loading}
-                          {...field}
-                        />
+                        <Input type="date" disabled={loading} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <Select
-                        disabled={loading}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
+                  name="movie_languages"
+                  render={({ field }) => {
+                    const loadOptions = (inputValue: string) =>
+                      new Promise<{ value: string; label: string }[]>(
+                        async (resolve) => {
+                          if (!inputValue) resolve([]);
+
+                          const { data, error } = await supabase
+                            .from("languages")
+                            .select("*")
+                            .ilike("name", `%${inputValue}%`);
+
+                          // console.log(data, error);
+                          if (!data) {
+                            resolve([]);
+                            return;
+                          }
+
+                          if (data.length == 0) resolve([]);
+                          resolve(
+                            data.map((d) => {
+                              return {
+                                value: d.id,
+                                label: d.name,
+                              };
+                            })
+                          );
+                        }
+                      );
+
+                    // console.log({ field });
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Languages</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select a country"
-                            />
-                          </SelectTrigger>
+                          <AsyncSelect
+                            loadOptions={loadOptions}
+                            isMulti
+                            cacheOptions
+                            defaultOptions
+                            {...field}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {/* @ts-ignore  */}
-                          {countries.map((country) => (
-                            <SelectItem key={country.id} value={country.id}>
-                              {country.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <Select
-                        disabled={loading}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
+                  name="movie_certificates"
+                  render={({ field }) => {
+                    const loadOptions = (inputValue: string) =>
+                      new Promise<{ value: string; label: string }[]>(
+                        async (resolve) => {
+                          if (!inputValue) resolve([]);
+
+                          const { data, error } = await supabase
+                            .from("certificates")
+                            .select("*")
+                            .ilike("name", `%${inputValue}%`);
+
+                          // console.log(data, error);
+                          if (!data) {
+                            resolve([]);
+                            return;
+                          }
+
+                          if (data.length == 0) resolve([]);
+                          resolve(
+                            data.map((d) => {
+                              return {
+                                value: d.id,
+                                label: d.name,
+                              };
+                            })
+                          );
+                        }
+                      );
+
+                    // console.log({ field });
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Movie Certificate</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              defaultValue={field.value}
-                              placeholder="Select a city"
-                            />
-                          </SelectTrigger>
+                          <AsyncSelect
+                            loadOptions={loadOptions}
+                            isMulti
+                            cacheOptions
+                            defaultOptions
+                            {...field}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {/* @ts-ignore  */}
-                          {cities.map((city) => (
-                            <SelectItem key={city.id} value={city.id}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="movie_genres"
+                  render={({ field }) => {
+                    const loadOptions = (inputValue: string) =>
+                      new Promise<{ value: string; label: string }[]>(
+                        async (resolve) => {
+                          if (!inputValue) resolve([]);
+
+                          const { data, error } = await supabase
+                            .from("genres")
+                            .select("*")
+                            .ilike("name", `%${inputValue}%`);
+
+                          // console.log(data, error);
+                          if (!data) {
+                            resolve([]);
+                            return;
+                          }
+
+                          if (data.length == 0) resolve([]);
+                          resolve(
+                            data.map((d) => {
+                              return {
+                                value: d.id,
+                                label: d.name,
+                              };
+                            })
+                          );
+                        }
+                      );
+
+                    // console.log({ field });
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Movie Genres</FormLabel>
+                        <FormControl>
+                          <AsyncSelect
+                            loadOptions={loadOptions}
+                            isMulti
+                            cacheOptions
+                            defaultOptions
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
               </>
             )}
             {currentStep === 1 && (
               <>
-                {fields?.map((field, index) => (
+                {movie_cast.fields?.map((field, index) => (
                   <Accordion
                     type="single"
                     collapsible
@@ -399,7 +561,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                       <AccordionTrigger
                         className={cn(
                           "[&[data-state=closed]>button]:hidden [&[data-state=open]>.alert]:hidden relative !no-underline",
-                          errors?.jobs?.[index] && "text-red-700",
+                          errors?.movie_cast?.[index] && "text-red-700"
                         )}
                       >
                         {`Work Experience ${index + 1}`}
@@ -408,11 +570,11 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                           variant="outline"
                           size="icon"
                           className="absolute right-8"
-                          onClick={() => remove(index)}
+                          onClick={() => movie_cast.remove(index)}
                         >
                           <Trash2Icon className="h-4 w-4 " />
                         </Button>
-                        {errors?.jobs?.[index] && (
+                        {errors?.movie_cast?.[index] && (
                           <span className="absolute alert right-8">
                             <AlertTriangleIcon className="h-4 w-4   text-red-700" />
                           </span>
@@ -421,143 +583,111 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                       <AccordionContent>
                         <div
                           className={cn(
-                            "md:grid md:grid-cols-3 gap-8 border p-4 rounded-md relative mb-4",
+                            "md:grid md:grid-cols-3 gap-8 border p-4 rounded-md relative mb-4"
                           )}
                         >
                           <FormField
                             control={form.control}
-                            name={`jobs.${index}.jobtitle`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job title</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.employer`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Employer</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.startdate`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Start date</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="date"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.enddate`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>End date</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="date"
-                                    disabled={loading}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`jobs.${index}.jobcountry`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job country</FormLabel>
-                                <Select
-                                  disabled={loading}
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                  defaultValue={field.value}
-                                >
+                            name={`movie_cast.${index}.role_id`}
+                            render={({ field }) => {
+                              const loadOptions = (inputValue: string) =>
+                                new Promise<{ value: string; label: string }[]>(
+                                  async (resolve) => {
+                                    if (!inputValue) resolve([]);
+
+                                    const { data, error } = await supabase
+                                      .from("cast_roles")
+                                      .select("*")
+                                      .ilike("name", `%${inputValue}%`);
+
+                                    // console.log(data, error);
+                                    if (!data) {
+                                      resolve([]);
+                                      return;
+                                    }
+
+                                    if (data.length == 0) resolve([]);
+                                    resolve(
+                                      data.map((d) => {
+                                        return {
+                                          value: d.id,
+                                          label: d.name,
+                                        };
+                                      })
+                                    );
+                                  }
+                                );
+
+                              // console.log({ field });
+
+                              return (
+                                <FormItem>
+                                  <FormLabel>Role</FormLabel>
                                   <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue
-                                        defaultValue={field.value}
-                                        placeholder="Select your job country"
-                                      />
-                                    </SelectTrigger>
+                                    <AsyncSelect
+                                      loadOptions={loadOptions}
+                                      cacheOptions
+                                      defaultOptions
+                                      {...field}
+                                    />
                                   </FormControl>
-                                  <SelectContent>
-                                    {countries.map((country) => (
-                                      <SelectItem
-                                        key={country.id}
-                                        value={country.id}
-                                      >
-                                        {country.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
+                                  <FormMessage />
+                                </FormItem>
+                              );
+                            }}
                           />
+
                           <FormField
                             control={form.control}
-                            name={`jobs.${index}.jobcity`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Job city</FormLabel>
-                                <Select
-                                  disabled={loading}
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                  defaultValue={field.value}
-                                >
+                            name={`movie_cast.${index}.cast_ids`}
+                            render={({ field }) => {
+                              const loadOptions = (inputValue: string) =>
+                                new Promise<{ value: string; label: string }[]>(
+                                  async (resolve) => {
+                                    if (!inputValue) resolve([]);
+
+                                    const { data, error } = await supabase
+                                      .from("cast_information")
+                                      .select("*")
+                                      .ilike("first_name", `%${inputValue}%`);
+
+                                    // console.log(data, error);
+                                    if (!data) {
+                                      resolve([]);
+                                      return;
+                                    }
+
+                                    if (data.length == 0) resolve([]);
+                                    resolve(
+                                      data.map((d) => {
+                                        return {
+                                          value: d.id,
+                                          label:
+                                            d.first_name + " " + d.last_name,
+                                        };
+                                      })
+                                    );
+                                  }
+                                );
+
+                              // console.log({ field });
+
+                              return (
+                                <FormItem>
+                                  <FormLabel>Cast</FormLabel>
                                   <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue
-                                        defaultValue={field.value}
-                                        placeholder="Select your job city"
-                                      />
-                                    </SelectTrigger>
+                                    <AsyncSelect
+                                      loadOptions={loadOptions}
+                                      isMulti
+                                      cacheOptions
+                                      defaultOptions
+                                      {...field}
+                                    />
                                   </FormControl>
-                                  <SelectContent>
-                                    {cities.map((city) => (
-                                      <SelectItem key={city.id} value={city.id}>
-                                        {city.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
+                                  <FormMessage />
+                                </FormItem>
+                              );
+                            }}
                           />
                         </div>
                       </AccordionContent>
@@ -571,13 +701,12 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                     className="flex justify-center"
                     size={"lg"}
                     onClick={() =>
-                      append({
-                        jobtitle: "",
-                        employer: "",
-                        startdate: "",
-                        enddate: "",
-                        jobcountry: "",
-                        jobcity: "",
+                      movie_cast.append({
+                        cast_ids: [],
+                        role_id: {
+                          label: "",
+                          value: "",
+                        },
                       })
                     }
                   >
