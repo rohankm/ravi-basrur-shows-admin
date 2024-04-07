@@ -3,6 +3,7 @@ import * as React from "react";
 import Select from "react-select";
 import type { Props } from "react-select";
 import Async from "react-select/async";
+import ACS from "react-select/async-creatable";
 import { cn } from "@/lib/utils";
 import type {
   ClearIndicatorProps,
@@ -222,6 +223,35 @@ export const AsyncSelect = React.forwardRef((props: Props, ref) => {
 
   return (
     <Async
+      ref={ref}
+      value={value}
+      onChange={onChange}
+      unstyled
+      components={{
+        DropdownIndicator,
+        ClearIndicator,
+        MultiValueRemove,
+        Option,
+        ...components,
+      }}
+      styles={styles}
+      classNames={classNames}
+      {...rest}
+    />
+  );
+});
+export const AsyncCreatableSelect = React.forwardRef((props: Props, ref) => {
+  const {
+    value,
+    onChange,
+    styles = defaultStyles,
+    classNames = defaultClassNames,
+    components = {},
+    ...rest
+  } = props;
+
+  return (
+    <ACS
       ref={ref}
       value={value}
       onChange={onChange}

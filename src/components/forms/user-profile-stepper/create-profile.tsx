@@ -16,7 +16,10 @@ import {
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
-import { AsyncSelect } from "@/components/ui/react-select";
+import {
+  AsyncCreatableSelect,
+  AsyncSelect,
+} from "@/components/ui/react-select";
 import {
   Select,
   SelectContent,
@@ -25,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,6 +66,13 @@ export const CompleteMovieSchema = z.object({
       label: z.string(),
     })
   ),
+  movie_tags: z.array(
+    z.object({
+      value: z.string(),
+      label: z.string(),
+      __isNew__: z.boolean().optional(),
+    })
+  ),
 
   movie_cast: z.array(
     z.object({
@@ -96,25 +107,19 @@ export const CompleteMovieSchema = z.object({
 type CompleteMovie = z.infer<typeof CompleteMovieSchema>;
 
 interface ProfileFormType {
-  initialData: any | null;
   categories: any;
 }
 
-export const CreateProfileOne: React.FC<ProfileFormType> = ({
-  initialData,
-  categories,
-}) => {
+export const CreateProfileOne: React.FC<ProfileFormType> = ({ categories }) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(false);
-  const title = initialData ? "Edit product" : "Create Your Profile";
-  const description = initialData
-    ? "Edit a product."
-    : "To create your resume, we first need some basic information about you.";
-  const toastMessage = initialData ? "Product updated." : "Product created.";
-  const action = initialData ? "Save changes" : "Create";
+  const title = "Create Movie";
+  const description =
+    "To create movie, we first need some basic information about you.";
+
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState({});
@@ -157,12 +162,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
   const onSubmit = async (data: CompleteMovie) => {
     try {
       setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
-      } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
-        // console.log("product", res);
-      }
+
       router.refresh();
       router.push(`/dashboard/products`);
     } catch (error: any) {
@@ -206,6 +206,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
         "movie_languages",
         "movie_certificates",
         "movie_genres",
+        "movie_tags",
       ],
     },
     {
@@ -271,17 +272,6 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     <>
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
       </div>
       <Separator />
       <div>
@@ -323,13 +313,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
           onSubmit={form.handleSubmit(processForm)}
           className="space-y-8 w-full"
         >
-          <div
-            className={cn(
-              currentStep === 1
-                ? "md:inline-block w-full"
-                : "md:grid md:grid-cols-3 gap-8"
-            )}
-          >
+          <div className={cn("md:grid max-w-xl gap-5")}>
             {currentStep === 0 && (
               <>
                 <FormField
@@ -356,7 +340,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                     <FormItem>
                       <FormLabel>Movie Description</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           disabled={loading}
                           placeholder="Movie Description"
                           {...field}
@@ -534,6 +518,58 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                         <FormLabel>Movie Genres</FormLabel>
                         <FormControl>
                           <AsyncSelect
+                            loadOptions={loadOptions}
+                            isMulti
+                            cacheOptions
+                            defaultOptions
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="movie_tags"
+                  render={({ field }) => {
+                    // console.log({ field });
+                    const loadOptions = (inputValue: string) =>
+                      new Promise<{ value: string; label: string }[]>(
+                        async (resolve) => {
+                          if (!inputValue) resolve([]);
+
+                          const { data, error } = await supabase
+                            .from("tags")
+                            .select("*")
+                            .ilike("name", `%${inputValue}%`);
+
+                          // console.log(data, error);
+                          if (!data) {
+                            resolve([]);
+                            return;
+                          }
+
+                          if (data.length == 0) resolve([]);
+                          resolve(
+                            data.map((d) => {
+                              return {
+                                value: d.id,
+                                label: d.name,
+                              };
+                            })
+                          );
+                        }
+                      );
+
+                    // console.log({ field });
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Movie Tags</FormLabel>
+                        <FormControl>
+                          <AsyncCreatableSelect
                             loadOptions={loadOptions}
                             isMulti
                             cacheOptions
