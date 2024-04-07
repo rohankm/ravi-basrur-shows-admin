@@ -7,6 +7,7 @@ import { CreateEditCastRole } from "@/components/movies/cast_roles/CreateEditCas
 import type { Metadata } from "next";
 import { redirect, useSearchParams } from "next/navigation";
 import { CreateEditCast } from "@/components/movies/cast/CreateEditCast";
+import { CreateEditTag } from "@/components/movies/tags/CreateEditTag";
 
 export default function DashboardLayout({
   children,
@@ -29,6 +30,9 @@ export default function DashboardLayout({
   const newCastRole = !!searchParams.get("new_cast_role");
   const editCastRole = searchParams.get("edit_cast_role");
 
+  const newTag = !!searchParams.get("new_tag");
+  const editTag = searchParams.get("edit_tag");
+
   return (
     <>
       {children}
@@ -46,6 +50,7 @@ export default function DashboardLayout({
         open={newCastRole || !!editCastRole}
         editCastRoleId={editCastRole}
       />
+      <CreateEditTag open={newTag || !!editTag} editTagId={editTag} />
     </>
   );
 }

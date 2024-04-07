@@ -468,6 +468,39 @@ export type Database = {
           }
         ];
       };
+      movie_tags: {
+        Row: {
+          id: string;
+          movie_id: string | null;
+          tag_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          movie_id?: string | null;
+          tag_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          movie_id?: string | null;
+          tag_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "movie_tags_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_tags_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       movie_videos: {
         Row: {
           created_at: string;
@@ -683,6 +716,21 @@ export type Database = {
             referencedColumns: ["id"];
           }
         ];
+      };
+      tags: {
+        Row: {
+          id: string;
+          name: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
       };
       tv_shows: {
         Row: {
