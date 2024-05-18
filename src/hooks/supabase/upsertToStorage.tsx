@@ -25,6 +25,7 @@ export default function useUpsertToStorage() {
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(path, image.data, { contentType: image.meta.type, upsert: true });
+    console.log("image upload", path, data);
     if (error) {
       console.log({ error });
       throw "Image upload failed";

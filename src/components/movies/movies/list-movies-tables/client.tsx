@@ -21,7 +21,7 @@ export const ListMovies: React.FC<Props> = ({}) => {
         <Button
           className="text-xs md:text-sm"
           onClick={() => {
-            router.push(pathName + "?new_certificate=true");
+            router.push("/dashboard/movies/create-movie");
           }}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New

@@ -508,7 +508,7 @@ export type Database = {
           movie_id: string | null;
           type: string | null;
           updated_at: string;
-          url: string;
+          content: string;
         };
         Insert: {
           created_at?: string;
@@ -516,7 +516,7 @@ export type Database = {
           movie_id?: string | null;
           type?: string | null;
           updated_at?: string;
-          url: string;
+          content: string;
         };
         Update: {
           created_at?: string;
@@ -524,7 +524,7 @@ export type Database = {
           movie_id?: string | null;
           type?: string | null;
           updated_at?: string;
-          url?: string;
+          content?: string;
         };
         Relationships: [
           {
@@ -543,7 +543,7 @@ export type Database = {
           id: string;
           is_draft: boolean | null;
           is_released: boolean | null;
-          release_year: number | null;
+          release_year: string | null;
           scheduled_release: string | null;
           title: string;
           updated_at: string;
@@ -554,7 +554,7 @@ export type Database = {
           id?: string;
           is_draft?: boolean | null;
           is_released?: boolean | null;
-          release_year?: number | null;
+          release_year?: string | null;
           scheduled_release?: string | null;
           title: string;
           updated_at?: string;
@@ -565,7 +565,7 @@ export type Database = {
           id?: string;
           is_draft?: boolean | null;
           is_released?: boolean | null;
-          release_year?: number | null;
+          release_year?: string | null;
           scheduled_release?: string | null;
           title?: string;
           updated_at?: string;
