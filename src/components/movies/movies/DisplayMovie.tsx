@@ -14,6 +14,9 @@ import { EditMovieCast } from "./EditMovieCast";
 import { EditReleaseDetailsAndPricing } from "./EditReleaseDetailsAndPricing";
 import useFetchStorage from "@/hooks/supabase/useFetchStorage";
 import { EditMovieVideosAndPosters } from "./EditMovieVideosAndPosters";
+import useMutationData from "@/hooks/supabase/useMutationData";
+import { useRouter } from "next/navigation";
+import useDeleteSingleFile from "../../../hooks/supabase/useDeleteSingleFile";
 
 function combineCastInformation(data) {
   const roleMap = {};
@@ -47,6 +50,9 @@ export default function DisplayMovie({ id }: { id: string }) {
   const [editCast, setEditCast] = useState(false);
   const [editRelease, setEditRelease] = useState(false);
   const [editVideos, setEditVideos] = useState(false);
+  const mutate = useMutationData();
+  const router = useRouter();
+  const deleteFile = useDeleteSingleFile();
   const select =
     "*,movie_cast(*,cast_information(*),cast_roles(*)),movie_posters(*),movie_videos(*,video_providers(*)),movie_genres(*,genres(*)),movie_certificates(*,certificates(*)),movie_languages(*,languages(*)),movie_tags(*,tags(*))";
   const {
@@ -78,7 +84,7 @@ export default function DisplayMovie({ id }: { id: string }) {
   console.log(movieInfoView);
 
   return (
-    <div>
+    <div className="">
       <Accordion type="multiple" collapsible className="w-full">
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-xl font-bold">
@@ -347,6 +353,28 @@ export default function DisplayMovie({ id }: { id: string }) {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      <div className="mt-10">
+        <Button
+          variant="destructive"
+          onClick={async () => {
+            const cf = confirm("Are you sure you want to DELETE?");
+            if (cf) {
+              movieInfo.movie_posters.map((d) => {
+                deleteFile({ fileUrl: d.url, bucket: "movie_posters" });
+              });
+              await mutate.mutateAsync({
+                query: supabase
+                  .from("movies")
+                  .delete()
+                  .match({ id: movieInfo?.id }),
+              });
+              router.replace("/dashboard/movies");
+            }
+          }}
+        >
+          Delete Movie
+        </Button>
+      </div>
     </div>
   );
 }
