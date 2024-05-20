@@ -45,14 +45,29 @@ const NAV_ITEMS: NavItem[] = [
         href: "/dashboard/movies/cast",
       },
       {
+        title: "Cast Roles",
+        icon: "users",
+        href: "/dashboard/movies/cast-roles",
+      },
+      {
         title: "Genres",
         icon: "drama",
         href: "/dashboard/movies/genres",
       },
       {
+        title: "Tags",
+        icon: "tags",
+        href: "/dashboard/movies/tags",
+      },
+      {
         title: "Languages",
         icon: "book-a",
         href: "/dashboard/movies/languages",
+      },
+      {
+        title: "Certificates",
+        icon: "scroll-text",
+        href: "/dashboard/movies/certificates",
       },
     ],
   },

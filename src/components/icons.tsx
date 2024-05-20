@@ -24,13 +24,16 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  ScrollText,
   Settings,
   SunMedium,
+  Tags,
   Trash,
   Twitter,
   User,
   User2Icon,
   UserX2Icon,
+  Users,
   X,
 } from "lucide-react";
 
@@ -66,6 +69,9 @@ export const Icons = {
   clapperboard: Clapperboard,
   "book-a": BookA,
   drama: Drama,
+  "scroll-text": ScrollText,
+  tags: Tags,
+  users: Users,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

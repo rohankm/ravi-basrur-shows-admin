@@ -2,9 +2,11 @@
 
 import {
   ColumnDef,
+  PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -19,23 +21,84 @@ import {
 import { Input } from "./input";
 import { Button } from "./button";
 import { ScrollArea, ScrollBar } from "./scroll-area";
+import { useEffect, useMemo, useReducer, useState } from "react";
+import { DataTablePagination } from "./DataTablePagination";
+import useFetchData from "@/hooks/supabase/useFetchData";
+
+import { PostgrestQueryBuilder } from "@supabase/postgrest-js";
+import {
+  GenericSchema,
+  GenericTable,
+} from "@supabase/supabase-js/dist/module/lib/types";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useDebounce } from "@uidotdev/usehooks";
+import { supabase } from "@/lib/supabase/client";
+import { Skeleton } from "./skeleton";
+import { Database } from "@/types/database.types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data?: TData[];
   searchKey: string;
+
+  tableName?: keyof Database["public"]["Tables"];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
+  tableName,
 }: DataTableProps<TData, TValue>) {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const memoQuery = useMemo(
+    () =>
+      supabase
+        .from(tableName!)
+        .select("*", { count: "exact" })
+        .ilike(searchKey, `%${debouncedSearch}%`)
+        .range(
+          pagination.pageIndex * pagination.pageSize,
+          pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
+        ),
+    [pagination, debouncedSearch, searchKey, tableName]
+  );
+  const {
+    data: resultData,
+    count,
+    isFetching,
+  } = useFetchData({
+    query: memoQuery,
+    options: {
+      enabled: !!tableName,
+      // placeholderData: keepPreviousData,
+    },
+  });
+
+  console.log({ tableName, resultData });
+
+  // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({
-    data,
+    data: [...(data ? data : resultData ?? [])],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    rowCount: count ?? -1,
+    manualPagination: true,
+    // manualPagination: true,
+    // pageCount: -1,
+    // initialState: { pageIndex: 0 },
   });
 
   /* this can be used to get the selectedrows 
@@ -45,10 +108,8 @@ export function DataTable<TData, TValue>({
     <>
       <Input
         placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn(searchKey)?.setFilterValue(event.target.value)
-        }
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
         className="w-full md:max-w-sm"
       />
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
@@ -63,7 +124,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -82,12 +143,22 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
+            ) : isFetching ? (
+              Array(10)
+                .fill(0)
+                .map((d, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={columns.length} className="">
+                      <Skeleton className="w-full h-[36px] " />
+                    </TableCell>
+                  </TableRow>
+                ))
             ) : (
               <TableRow>
                 <TableCell
@@ -102,30 +173,7 @@ export function DataTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <DataTablePagination table={table} />
     </>
   );
 }

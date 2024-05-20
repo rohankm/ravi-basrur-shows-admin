@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Next Shadcn Dashboard Starter",
-  description: "Basic dashboard with Next.js and Shadcn",
+  title: "Ravi Basrur Shows Admin",
+  description: "Ravi Basrur Shows Admin",
 };
 
 export default async function DashboardLayout({
@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   const supabaseServer = createClient();
   const { data, error } = await supabaseServer.auth.getUser();
 
-  console.log(data, error);
+  // console.log(data, error);
   if (error || !data?.user) {
     redirect("/");
   }

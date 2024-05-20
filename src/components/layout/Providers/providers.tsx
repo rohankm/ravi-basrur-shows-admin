@@ -3,6 +3,7 @@ import React from "react";
 import ThemeProvider from "../ThemeToggle/theme-provider";
 import { User } from "@supabase/supabase-js";
 import UserDetailsContextProvider from "./UserDetailsContextProvider";
+import { ReactQueryClientProvider } from "./ReactQueryClientProvider";
 
 export default function Providers({
   children,
@@ -15,7 +16,7 @@ export default function Providers({
     <>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <UserDetailsContextProvider user={user}>
-          {children}
+          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
         </UserDetailsContextProvider>
       </ThemeProvider>
     </>
