@@ -20,7 +20,7 @@ export default function useUpsertToStorage() {
     const id = uuidv4();
     const path = originalImage
       ? originalImage
-      : +"/" + id + `.${image.extension}`;
+      : "/" + id + `.${image.extension}`;
 
     const { data, error } = await supabase.storage
       .from(bucket)
