@@ -17,6 +17,7 @@ import { EditMovieVideosAndPosters } from "./EditMovieVideosAndPosters";
 import useMutationData from "@/hooks/supabase/useMutationData";
 import { useRouter } from "next/navigation";
 import useDeleteSingleFile from "../../../hooks/supabase/useDeleteSingleFile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function combineCastInformation(data) {
   const roleMap = {};
@@ -84,134 +85,138 @@ export default function DisplayMovie({ id }: { id: string }) {
   console.log(movieInfoView);
 
   return (
-    <div className="">
-      <Accordion type="multiple" collapsible className="w-full">
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="text-xl font-bold">
-            Movie Information
-          </AccordionTrigger>
-          <AccordionContent>
-            <DisplayCard title="Movie Name" content={movieInfo?.title} />
-            <DisplayCard
-              title="Movie Description"
-              content={movieInfo?.description}
-            />
-            <DisplayCard
-              title="Release Date"
-              content={new Date(movieInfo?.release_date).toDateString()}
-            />
-
-            <DisplayCard
-              title="Movie Certificate"
-              content={movieInfo?.movie_certificates
-                .map((d) => d.certificates?.name)
-                .join(", ")}
-            />
-            <DisplayCard
-              title="Genre"
-              content={movieInfo?.movie_genres
-                .map((d) => d.genres?.name)
-                .join(", ")}
-            />
-            <DisplayCard
-              title="Languages"
-              content={movieInfo?.movie_languages
-                .map((d) => d.languages?.name)
-                .join(", ")}
-            />
-            <DisplayCard
-              title="Tags"
-              content={movieInfo?.movie_tags
-                .map((d) => d.tags?.name)
-                .join(", ")}
-            />
-            <Button
-              className="mt-5"
-              onClick={() => {
-                setEditBasicInformation(true);
-              }}
-            >
-              Edit
-            </Button>
-            {movieInfo && (
-              <EditBasicInformation
-                open={editBasicInformation}
-                movie_id={movieInfo.id}
-                select={select}
-                defaultValues={{
-                  title: movieInfo?.title,
-                  description: movieInfo?.description,
-                  release_date: new Date(movieInfo?.release_date)
-                    ?.toISOString()
-                    .split("T")[0],
-                  movie_genres: movieInfo.movie_genres.map((d) => {
-                    return {
-                      label: d.genres?.name,
-                      value: d.genres?.id,
-                      _id: d.id,
-                    };
-                  }),
-                  movie_languages: movieInfo.movie_languages.map((d) => {
-                    return {
-                      label: d.languages?.name,
-                      value: d.languages?.id,
-                      _id: d.id,
-                    };
-                  }),
-                  movie_certificates: movieInfo.movie_certificates.map((d) => {
-                    return {
-                      label: d.certificates?.name,
-                      value: d.certificates?.id,
-                      _id: d.id,
-                    };
-                  }),
-                  movie_tags: movieInfo.movie_tags.map((d) => {
-                    return {
-                      label: d.tags?.name,
-                      value: d.tags?.id,
-                      _id: d.id,
-                    };
-                  }),
-                }}
-                onClose={() => {
-                  refetch();
-                  setEditBasicInformation(false);
-                }}
+    <div className="overflow-y-auto flex-1">
+      <ScrollArea className="flex-1 h-[75vh]">
+        <Accordion type="multiple" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="text-xl font-bold">
+              Movie Information
+            </AccordionTrigger>
+            <AccordionContent>
+              <DisplayCard title="Movie Name" content={movieInfo?.title} />
+              <DisplayCard
+                title="Movie Description"
+                content={movieInfo?.description}
               />
-            )}
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-          <AccordionTrigger className="text-xl font-bold">
-            Movie Cast
-          </AccordionTrigger>
-          <AccordionContent>
-            {movieInfo?.movie_cast &&
-              combineCastInformation(movieInfo?.movie_cast).map((d) => {
-                return (
-                  <DisplayCard
-                    title={d.cast_roles?.name}
-                    content={d.cast_information
-                      ?.map((d) => d?.first_name + " " + d?.last_name)
-                      .join(", ")}
-                  />
-                );
-              })}
-            <Button
-              className="mt-5"
-              onClick={() => {
-                setEditCast(true);
-              }}
-            >
-              Edit
-            </Button>
-            {movieInfo && (
-              <EditMovieCast
-                open={editCast}
-                movie_id={movieInfo.id}
-                defaultValues={{
-                  movie_cast: combineCastInformation(movieInfo.movie_cast).map(
-                    (m) => {
+              <DisplayCard
+                title="Release Date"
+                content={new Date(movieInfo?.release_date).toDateString()}
+              />
+
+              <DisplayCard
+                title="Movie Certificate"
+                content={movieInfo?.movie_certificates
+                  .map((d) => d.certificates?.name)
+                  .join(", ")}
+              />
+              <DisplayCard
+                title="Genre"
+                content={movieInfo?.movie_genres
+                  .map((d) => d.genres?.name)
+                  .join(", ")}
+              />
+              <DisplayCard
+                title="Languages"
+                content={movieInfo?.movie_languages
+                  .map((d) => d.languages?.name)
+                  .join(", ")}
+              />
+              <DisplayCard
+                title="Tags"
+                content={movieInfo?.movie_tags
+                  .map((d) => d.tags?.name)
+                  .join(", ")}
+              />
+              <Button
+                className="mt-5"
+                onClick={() => {
+                  setEditBasicInformation(true);
+                }}
+              >
+                Edit
+              </Button>
+              {movieInfo && (
+                <EditBasicInformation
+                  open={editBasicInformation}
+                  movie_id={movieInfo.id}
+                  select={select}
+                  defaultValues={{
+                    title: movieInfo?.title,
+                    description: movieInfo?.description,
+                    release_date: new Date(movieInfo?.release_date)
+                      ?.toISOString()
+                      .split("T")[0],
+                    movie_genres: movieInfo.movie_genres.map((d) => {
+                      return {
+                        label: d.genres?.name,
+                        value: d.genres?.id,
+                        _id: d.id,
+                      };
+                    }),
+                    movie_languages: movieInfo.movie_languages.map((d) => {
+                      return {
+                        label: d.languages?.name,
+                        value: d.languages?.id,
+                        _id: d.id,
+                      };
+                    }),
+                    movie_certificates: movieInfo.movie_certificates.map(
+                      (d) => {
+                        return {
+                          label: d.certificates?.name,
+                          value: d.certificates?.id,
+                          _id: d.id,
+                        };
+                      }
+                    ),
+                    movie_tags: movieInfo.movie_tags.map((d) => {
+                      return {
+                        label: d.tags?.name,
+                        value: d.tags?.id,
+                        _id: d.id,
+                      };
+                    }),
+                  }}
+                  onClose={() => {
+                    refetch();
+                    setEditBasicInformation(false);
+                  }}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="text-xl font-bold">
+              Movie Cast
+            </AccordionTrigger>
+            <AccordionContent>
+              {movieInfo?.movie_cast &&
+                combineCastInformation(movieInfo?.movie_cast).map((d) => {
+                  return (
+                    <DisplayCard
+                      title={d.cast_roles?.name}
+                      content={d.cast_information
+                        ?.map((d) => d?.first_name + " " + d?.last_name)
+                        .join(", ")}
+                    />
+                  );
+                })}
+              <Button
+                className="mt-5"
+                onClick={() => {
+                  setEditCast(true);
+                }}
+              >
+                Edit
+              </Button>
+              {movieInfo && (
+                <EditMovieCast
+                  open={editCast}
+                  movie_id={movieInfo.id}
+                  defaultValues={{
+                    movie_cast: combineCastInformation(
+                      movieInfo.movie_cast
+                    ).map((m) => {
                       return {
                         role_id: {
                           value: m.cast_roles?.id,
@@ -226,155 +231,158 @@ export default function DisplayMovie({ id }: { id: string }) {
                         }),
                         _id: m.id,
                       };
-                    }
-                  ),
-                }}
-                onClose={() => {
-                  refetch();
-                  setEditCast(false);
-                }}
-              />
-            )}
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-3">
-          <AccordionTrigger className="text-xl font-bold">
-            Release Details & Pricing
-          </AccordionTrigger>
-          <AccordionContent>
-            <DisplayCard
-              title="Is Released"
-              content={JSON.stringify(movieInfo?.is_released)}
-            />
-            <DisplayCard
-              title="Scheduled Release Date"
-              content={new Date(movieInfo?.scheduled_release).toDateString()}
-            />
-            <DisplayCard
-              title="Watching Option"
-              content={movieInfo?.watching_option}
-            />
-            <DisplayCard title="Pricing" content={movieInfo?.pricing_amount} />
-            <DisplayCard
-              title="Discounted Pricing"
-              content={movieInfo?.discounted_pricing_amount}
-            />
-            <Button
-              className="mt-5"
-              onClick={() => {
-                setEditRelease(true);
-              }}
-            >
-              Edit
-            </Button>
-            {movieInfo && (
-              <EditReleaseDetailsAndPricing
-                open={editRelease}
-                movie_id={movieInfo.id}
-                defaultValues={{
-                  scheduled_release: new Date(movieInfo.scheduled_release)
-                    .toISOString()
-                    .split("T")[0],
-                  watching_option: {
-                    value: movieInfo.watching_option,
-                    label: movieInfo.watching_option,
-                  },
-                  pricing_amount: movieInfo.pricing_amount.toString(),
-                  discounted_pricing_amount:
-                    movieInfo.discounted_pricing_amount.toString(),
-                }}
-                onClose={() => {
-                  refetch();
-                  setEditRelease(false);
-                }}
-              />
-            )}
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-4">
-          <AccordionTrigger className="text-xl font-bold">
-            Videos and Posters
-          </AccordionTrigger>
-          <AccordionContent>
-            <p className="font-bold text-lg">Videos</p>
-            {movieInfo?.movie_videos.map((d) => (
+                    }),
+                  }}
+                  onClose={() => {
+                    refetch();
+                    setEditCast(false);
+                  }}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger className="text-xl font-bold">
+              Release Details & Pricing
+            </AccordionTrigger>
+            <AccordionContent>
               <DisplayCard
-                title={d.type}
-                content={
-                  d.video_providers.name + " " + JSON.stringify(d.content)
-                }
+                title="Is Released"
+                content={JSON.stringify(movieInfo?.is_released)}
               />
-            ))}
-
-            <p className="mt-5 font-bold text-lg">Posters</p>
-            {movieInfo?.movie_posters.map((d) => (
-              <DisplayPoster d={d} key={d.id} />
-            ))}
-            <Button
-              className="mt-5"
-              onClick={() => {
-                setEditVideos(true);
-              }}
-            >
-              Edit
-            </Button>
-            {movieInfo && (
-              <EditMovieVideosAndPosters
-                open={editVideos}
-                movie_id={movieInfo.id}
-                defaultValues={{
-                  movie_videos: movieInfo.movie_videos.map((d) => {
-                    return {
-                      content: JSON.stringify(d.content),
-                      type: d.type,
-                      provider: {
-                        label: d.video_providers.name,
-                        value: d.video_providers.id,
-                      },
-                      _id: d.id,
-                    };
-                  }),
-
-                  movie_posters: movieInfo.movie_posters.map((d) => {
-                    return {
-                      url: d.url,
-                      type: d.type,
-                      _id: d.id,
-                    };
-                  }),
-                }}
-                onClose={() => {
-                  refetch();
-                  setEditVideos(false);
-                }}
+              <DisplayCard
+                title="Scheduled Release Date"
+                content={new Date(movieInfo?.scheduled_release).toDateString()}
               />
-            )}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      <div className="mt-10">
-        <Button
-          variant="destructive"
-          onClick={async () => {
-            const cf = confirm("Are you sure you want to DELETE?");
-            if (cf) {
-              movieInfo.movie_posters.map((d) => {
-                deleteFile({ fileUrl: d.url, bucket: "movie_posters" });
-              });
-              await mutate.mutateAsync({
-                query: supabase
-                  .from("movies")
-                  .delete()
-                  .match({ id: movieInfo?.id }),
-              });
-              router.replace("/dashboard/movies");
-            }
-          }}
-        >
-          Delete Movie
-        </Button>
-      </div>
+              <DisplayCard
+                title="Watching Option"
+                content={movieInfo?.watching_option}
+              />
+              <DisplayCard
+                title="Pricing"
+                content={movieInfo?.pricing_amount}
+              />
+              <DisplayCard
+                title="Discounted Pricing"
+                content={movieInfo?.discounted_pricing_amount}
+              />
+              <Button
+                className="mt-5"
+                onClick={() => {
+                  setEditRelease(true);
+                }}
+              >
+                Edit
+              </Button>
+              {movieInfo && (
+                <EditReleaseDetailsAndPricing
+                  open={editRelease}
+                  movie_id={movieInfo.id}
+                  defaultValues={{
+                    scheduled_release: new Date(movieInfo.scheduled_release)
+                      .toISOString()
+                      .split("T")[0],
+                    watching_option: {
+                      value: movieInfo.watching_option,
+                      label: movieInfo.watching_option,
+                    },
+                    pricing_amount: movieInfo.pricing_amount.toString(),
+                    discounted_pricing_amount:
+                      movieInfo.discounted_pricing_amount.toString(),
+                  }}
+                  onClose={() => {
+                    refetch();
+                    setEditRelease(false);
+                  }}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4">
+            <AccordionTrigger className="text-xl font-bold">
+              Videos and Posters
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="font-bold text-lg">Videos</p>
+              {movieInfo?.movie_videos.map((d) => (
+                <DisplayCard
+                  title={d.type}
+                  content={
+                    d.video_providers.name + " " + JSON.stringify(d.content)
+                  }
+                />
+              ))}
+
+              <p className="mt-5 font-bold text-lg">Posters</p>
+              {movieInfo?.movie_posters.map((d) => (
+                <DisplayPoster d={d} key={d.id} />
+              ))}
+              <Button
+                className="mt-5"
+                onClick={() => {
+                  setEditVideos(true);
+                }}
+              >
+                Edit
+              </Button>
+              {movieInfo && (
+                <EditMovieVideosAndPosters
+                  open={editVideos}
+                  movie_id={movieInfo.id}
+                  defaultValues={{
+                    movie_videos: movieInfo.movie_videos.map((d) => {
+                      return {
+                        content: JSON.stringify(d.content),
+                        type: d.type,
+                        provider: {
+                          label: d.video_providers.name,
+                          value: d.video_providers.id,
+                        },
+                        _id: d.id,
+                      };
+                    }),
+
+                    movie_posters: movieInfo.movie_posters.map((d) => {
+                      return {
+                        url: d.url,
+                        type: d.type,
+                        _id: d.id,
+                      };
+                    }),
+                  }}
+                  onClose={() => {
+                    refetch();
+                    setEditVideos(false);
+                  }}
+                />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <div className="mt-10">
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              const cf = confirm("Are you sure you want to DELETE?");
+              if (cf) {
+                movieInfo.movie_posters.map((d) => {
+                  deleteFile({ fileUrl: d.url, bucket: "movie_posters" });
+                });
+                await mutate.mutateAsync({
+                  query: supabase
+                    .from("movies")
+                    .delete()
+                    .match({ id: movieInfo?.id }),
+                });
+                router.replace("/dashboard/movies");
+              }
+            }}
+          >
+            Delete Movie
+          </Button>
+        </div>
+      </ScrollArea>
     </div>
   );
 }

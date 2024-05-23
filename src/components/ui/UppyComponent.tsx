@@ -26,9 +26,11 @@ export default function UppyComponent({
           maxNumberOfFiles: 1,
           allowedFileTypes: ["image/*"],
         },
-        autoProceed: true,
         allowMultipleUploadBatches: false,
         id: "mediaImage",
+        // debug: true,
+
+        autoProceed: false,
       })
         .use(ImageEditor, {
           target: "",
@@ -49,18 +51,24 @@ export default function UppyComponent({
             zoomOut: true,
           },
         })
-        .on("file-editor:complete", (updatedFile) => {
-          // Access uploaded image data
-          //   console.log({ updatedFile });
-
-          field.onChange(updatedFile);
-        })
         .on("file-removed", (updatedFile) => {
           // Access uploaded image data
 
           field.onChange();
         })
-        .use(Compressor),
+        .use(Compressor, {
+          maxWidth: 1500,
+          maxHeight: 1500,
+        })
+        .on("complete", (result) => {
+          const uploadedFile = result.successful[0];
+
+          console.log({ uploadedFile });
+          field.onChange(uploadedFile);
+        })
+        .on("file-editor:complete", (updatedFile) => {
+          uppy.upload();
+        }),
     []
   );
 
@@ -95,6 +103,7 @@ export default function UppyComponent({
       width={"100%"}
       plugins={["ImageEditor"]}
       proudlyDisplayPoweredByUppy={false}
+      hideUploadButton={true}
       autoOpenFileEditor={true}
     />
   );

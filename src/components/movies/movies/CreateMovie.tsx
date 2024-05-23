@@ -1367,7 +1367,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
             <button
               type="button"
               onClick={prev}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || loading}
               className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg
@@ -1388,7 +1388,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
             <button
               type="button"
               onClick={next}
-              disabled={currentStep === steps.length - 1}
+              disabled={currentStep === steps.length - 1 || loading}
               className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 flex flex-row"
             >
               {currentStep === steps.length - 2 && "Submit"}

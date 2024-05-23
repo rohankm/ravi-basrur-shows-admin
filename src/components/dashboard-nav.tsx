@@ -29,7 +29,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Dashboard",
   },
   {
-    title: "Movies",
+    title: "Movies & Shows",
     icon: "clapperboard",
     // href: "/example",
     isChidren: true,

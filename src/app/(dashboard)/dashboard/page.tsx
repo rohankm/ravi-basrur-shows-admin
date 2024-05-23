@@ -20,12 +20,12 @@ export default function page() {
           <h2 className="text-3xl font-bold tracking-tight">
             Hi, Welcome back 👋
           </h2>
-          <div className="hidden md:flex items-center space-x-2">
+          {/* <div className="hidden md:flex items-center space-x-2">
             <CalendarDateRangePicker />
             <Button>Download</Button>
-          </div>
+          </div> */}
         </div>
-        <Tabs defaultValue="overview" className="space-y-4">
+        {/* <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics" disabled>
@@ -158,7 +158,7 @@ export default function page() {
               </Card>
             </div>
           </TabsContent>
-        </Tabs>
+        </Tabs> */}
       </div>
     </ScrollArea>
   );
