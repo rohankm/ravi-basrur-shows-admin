@@ -130,6 +130,65 @@ export type Database = {
         };
         Relationships: [];
       };
+      content_access: {
+        Row: {
+          created_at: string;
+          end_date: string;
+          id: string;
+          movie_id: string;
+          start_date: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          end_date: string;
+          id?: string;
+          movie_id?: string;
+          start_date: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          end_date?: string;
+          id?: string;
+          movie_id?: string;
+          start_date?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "content_access_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "content_access_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "content_access_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "content_access_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       episodes: {
         Row: {
           created_at: string;
@@ -191,6 +250,59 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      home_slider: {
+        Row: {
+          created_at: string;
+          id: string;
+          movies_id: string | null;
+          tv_shows_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          movies_id?: string | null;
+          tv_shows_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          movies_id?: string | null;
+          tv_shows_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "home_slider_movies_id_fkey";
+            columns: ["movies_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "home_slider_movies_id_fkey";
+            columns: ["movies_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "home_slider_movies_id_fkey";
+            columns: ["movies_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "home_slider_tv_shows_id_fkey";
+            columns: ["tv_shows_id"];
+            isOneToOne: false;
+            referencedRelation: "tv_shows";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       languages: {
         Row: {
@@ -260,6 +372,20 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "movie_cast_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_cast_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "movie_cast_role_id_fkey";
             columns: ["role_id"];
             isOneToOne: false;
@@ -304,6 +430,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_certificates_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_certificates_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
           }
         ];
       };
@@ -342,6 +482,20 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_genres_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_genres_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           }
         ];
@@ -382,6 +536,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_languages_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_languages_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
           }
         ];
       };
@@ -417,10 +585,290 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_posters_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_posters_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
           }
         ];
       };
-      movie_rentals: {
+      movie_tags: {
+        Row: {
+          created_at: string;
+          id: string;
+          movie_id: string | null;
+          tag_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          movie_id?: string | null;
+          tag_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          movie_id?: string | null;
+          tag_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "movie_tags_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_tags_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_tags_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_tags_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      movie_videos: {
+        Row: {
+          content: Json;
+          created_at: string;
+          id: string;
+          movie_id: string | null;
+          provider: string;
+          type: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          content: Json;
+          created_at?: string;
+          id?: string;
+          movie_id?: string | null;
+          provider: string;
+          type?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          content?: Json;
+          created_at?: string;
+          id?: string;
+          movie_id?: string | null;
+          provider?: string;
+          type?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "movie_videos_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_videos_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_videos_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "movie_videos_provider_fkey";
+            columns: ["provider"];
+            isOneToOne: false;
+            referencedRelation: "video_providers";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      movies: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          discounted_pricing_amount: number;
+          duration: number | null;
+          id: string;
+          is_draft: boolean | null;
+          is_released: boolean | null;
+          pricing_amount: number;
+          release_date: string | null;
+          scheduled_release: string | null;
+          title: string;
+          updated_at: string;
+          watching_option: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          discounted_pricing_amount?: number;
+          duration?: number | null;
+          id?: string;
+          is_draft?: boolean | null;
+          is_released?: boolean | null;
+          pricing_amount?: number;
+          release_date?: string | null;
+          scheduled_release?: string | null;
+          title: string;
+          updated_at?: string;
+          watching_option: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          discounted_pricing_amount?: number;
+          duration?: number | null;
+          id?: string;
+          is_draft?: boolean | null;
+          is_released?: boolean | null;
+          pricing_amount?: number;
+          release_date?: string | null;
+          scheduled_release?: string | null;
+          title?: string;
+          updated_at?: string;
+          watching_option?: string;
+        };
+        Relationships: [];
+      };
+      payment_transactions: {
+        Row: {
+          amount: number;
+          created_at: string | null;
+          id: string;
+          movie_id: string;
+          payment_gateway: string;
+          payment_method: string | null;
+          response: Json | null;
+          status: Database["public"]["Enums"]["payment_status"];
+          transaction_id: string | null;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string | null;
+          id?: string;
+          movie_id?: string;
+          payment_gateway: string;
+          payment_method?: string | null;
+          response?: Json | null;
+          status?: Database["public"]["Enums"]["payment_status"];
+          transaction_id?: string | null;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string | null;
+          id?: string;
+          movie_id?: string;
+          payment_gateway?: string;
+          payment_method?: string | null;
+          response?: Json | null;
+          status?: Database["public"]["Enums"]["payment_status"];
+          transaction_id?: string | null;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_transactions_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_transactions_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_transactions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      profiles: {
+        Row: {
+          avatar: string | null;
+          created_at: string;
+          id: string;
+          profile_name: string | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          avatar?: string | null;
+          created_at?: string;
+          id?: string;
+          profile_name?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          avatar?: string | null;
+          created_at?: string;
+          id?: string;
+          profile_name?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      rental: {
         Row: {
           created_at: string;
           id: string;
@@ -453,156 +901,31 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "movie_rentals_movie_id_fkey";
+            foreignKeyName: "rental_movie_id_fkey";
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "movie_rentals_profile_id_fkey";
+            foreignKeyName: "rental_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rental_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rental_profile_id_fkey";
             columns: ["profile_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      movie_tags: {
-        Row: {
-          id: string;
-          movie_id: string | null;
-          tag_id: string | null;
-        };
-        Insert: {
-          id?: string;
-          movie_id?: string | null;
-          tag_id?: string | null;
-        };
-        Update: {
-          id?: string;
-          movie_id?: string | null;
-          tag_id?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "movie_tags_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_tags_tag_id_fkey";
-            columns: ["tag_id"];
-            isOneToOne: false;
-            referencedRelation: "tags";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      movie_videos: {
-        Row: {
-          created_at: string;
-          id: string;
-          movie_id: string | null;
-          type: string | null;
-          updated_at: string;
-          content: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          movie_id?: string | null;
-          type?: string | null;
-          updated_at?: string;
-          content: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          movie_id?: string | null;
-          type?: string | null;
-          updated_at?: string;
-          content?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "movie_videos_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      movies: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          id: string;
-          is_draft: boolean | null;
-          is_released: boolean | null;
-          release_year: string | null;
-          scheduled_release: string | null;
-          title: string;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          is_draft?: boolean | null;
-          is_released?: boolean | null;
-          release_year?: string | null;
-          scheduled_release?: string | null;
-          title: string;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          is_draft?: boolean | null;
-          is_released?: boolean | null;
-          release_year?: string | null;
-          scheduled_release?: string | null;
-          title?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      profiles: {
-        Row: {
-          avatar: string | null;
-          created_at: string;
-          id: string;
-          profile_name: string;
-          updated_at: string;
-          user_id: string | null;
-        };
-        Insert: {
-          avatar?: string | null;
-          created_at?: string;
-          id?: string;
-          profile_name: string;
-          updated_at?: string;
-          user_id?: string | null;
-        };
-        Update: {
-          avatar?: string | null;
-          created_at?: string;
-          id?: string;
-          profile_name?: string;
-          updated_at?: string;
-          user_id?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "profiles_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
             referencedColumns: ["id"];
           }
         ];
@@ -674,6 +997,20 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "reviews_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "reviews_reviewer_id_fkey";
             columns: ["reviewer_id"];
             isOneToOne: false;
@@ -719,16 +1056,22 @@ export type Database = {
       };
       tags: {
         Row: {
+          created_at: string;
           id: string;
           name: string;
+          updated_at: string;
         };
         Insert: {
+          created_at?: string;
           id?: string;
           name: string;
+          updated_at?: string;
         };
         Update: {
+          created_at?: string;
           id?: string;
           name?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };
@@ -804,34 +1147,73 @@ export type Database = {
           }
         ];
       };
-      viewing_history: {
+      video_providers: {
         Row: {
           created_at: string;
+          fields: Json | null;
           id: string;
-          last_watched_timestamp: string | null;
-          movie_id: string | null;
-          profile_id: string | null;
-          seconds_watched: number | null;
-          tv_show_episode_id: string | null;
+          name: string;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
+          fields?: Json | null;
           id?: string;
-          last_watched_timestamp?: string | null;
-          movie_id?: string | null;
-          profile_id?: string | null;
-          seconds_watched?: number | null;
-          tv_show_episode_id?: string | null;
+          name: string;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
+          fields?: Json | null;
           id?: string;
-          last_watched_timestamp?: string | null;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      viewing_history: {
+        Row: {
+          completed: boolean;
+          content: string;
+          created_at: string;
+          current_time: number;
+          device_type: string | null;
+          id: string;
+          ip_address: string | null;
+          movie_id: string | null;
+          others: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id: string;
+          tv_show_episode_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          completed?: boolean;
+          content: string;
+          created_at?: string;
+          current_time?: number;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
           movie_id?: string | null;
-          profile_id?: string | null;
-          seconds_watched?: number | null;
+          others?: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id: string;
+          tv_show_episode_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          completed?: boolean;
+          content?: string;
+          created_at?: string;
+          current_time?: number;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          movie_id?: string | null;
+          others?: Json | null;
+          player_event?: Database["public"]["Enums"]["player_events"];
+          profile_id?: string;
           tv_show_episode_id?: string | null;
           updated_at?: string;
         };
@@ -841,6 +1223,20 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "viewing_history_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "viewing_history_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -859,13 +1255,72 @@ export type Database = {
           }
         ];
       };
+      viewing_history_logs: {
+        Row: {
+          completed: boolean;
+          content: string | null;
+          created_at: string;
+          current_time: number;
+          device_type: string | null;
+          id: string;
+          ip_address: string | null;
+          movie_id: string | null;
+          others: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id: string;
+          tv_show_episode_id: string | null;
+          updated_at: string;
+          viewing_history_id: string;
+        };
+        Insert: {
+          completed?: boolean;
+          content?: string | null;
+          created_at?: string;
+          current_time?: number;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          movie_id?: string | null;
+          others?: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id: string;
+          tv_show_episode_id?: string | null;
+          updated_at?: string;
+          viewing_history_id: string;
+        };
+        Update: {
+          completed?: boolean;
+          content?: string | null;
+          created_at?: string;
+          current_time?: number;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          movie_id?: string | null;
+          others?: Json | null;
+          player_event?: Database["public"]["Enums"]["player_events"];
+          profile_id?: string;
+          tv_show_episode_id?: string | null;
+          updated_at?: string;
+          viewing_history_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "viewing_history_logs_viewing_history_id_fkey";
+            columns: ["viewing_history_id"];
+            isOneToOne: false;
+            referencedRelation: "viewing_history";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       watchlists: {
         Row: {
           created_at: string;
           id: string;
           item_type: string | null;
           movie_id: string | null;
-          profile_id: string | null;
+          profile_id: string;
           tv_show_id: string | null;
           updated_at: string;
         };
@@ -874,7 +1329,7 @@ export type Database = {
           id?: string;
           item_type?: string | null;
           movie_id?: string | null;
-          profile_id?: string | null;
+          profile_id: string;
           tv_show_id?: string | null;
           updated_at?: string;
         };
@@ -883,7 +1338,7 @@ export type Database = {
           id?: string;
           item_type?: string | null;
           movie_id?: string | null;
-          profile_id?: string | null;
+          profile_id?: string;
           tv_show_id?: string | null;
           updated_at?: string;
         };
@@ -893,6 +1348,20 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "watchlists_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "watchlists_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -913,13 +1382,78 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      movies_details: {
+        Row: {
+          cast: Json | null;
+          certificates: string[] | null;
+          created_at: string | null;
+          description: string | null;
+          discounted_pricing_amount: number | null;
+          genres: string[] | null;
+          home_slider: boolean | null;
+          id: string | null;
+          is_draft: boolean | null;
+          is_released: boolean | null;
+          languages: string[] | null;
+          movie_posters: Json | null;
+          movie_videos: Json | null;
+          pricing_amount: number | null;
+          release_date: string | null;
+          scheduled_release: string | null;
+          tags: string[] | null;
+          title: string | null;
+          updated_at: string | null;
+          watching_option: string | null;
+        };
+        Relationships: [];
+      };
+      movies_details_mv: {
+        Row: {
+          cast: Json | null;
+          certificates: string[] | null;
+          created_at: string | null;
+          description: string | null;
+          discounted_pricing_amount: number | null;
+          genres: string[] | null;
+          home_slider: boolean | null;
+          id: string | null;
+          is_draft: boolean | null;
+          is_released: boolean | null;
+          languages: string[] | null;
+          movie_posters: Json | null;
+          movie_videos: Json | null;
+          pricing_amount: number | null;
+          release_date: string | null;
+          scheduled_release: string | null;
+          tags: string[] | null;
+          title: string | null;
+          updated_at: string | null;
+          watching_option: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      payment_status:
+        | "initiated"
+        | "pending"
+        | "success"
+        | "failed"
+        | "refunded";
+      player_events:
+        | "pause"
+        | "play"
+        | "completed"
+        | "error"
+        | "seek"
+        | "subtitle"
+        | "current_time"
+        | "initial"
+        | "back";
+      watching_options: "rental" | "paid" | "free";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1037,6 +1571,101 @@ export type Database = {
           }
         ];
       };
+      s3_multipart_uploads: {
+        Row: {
+          bucket_id: string;
+          created_at: string;
+          id: string;
+          in_progress_size: number;
+          key: string;
+          owner_id: string | null;
+          upload_signature: string;
+          version: string;
+        };
+        Insert: {
+          bucket_id: string;
+          created_at?: string;
+          id: string;
+          in_progress_size?: number;
+          key: string;
+          owner_id?: string | null;
+          upload_signature: string;
+          version: string;
+        };
+        Update: {
+          bucket_id?: string;
+          created_at?: string;
+          id?: string;
+          in_progress_size?: number;
+          key?: string;
+          owner_id?: string | null;
+          upload_signature?: string;
+          version?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey";
+            columns: ["bucket_id"];
+            isOneToOne: false;
+            referencedRelation: "buckets";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      s3_multipart_uploads_parts: {
+        Row: {
+          bucket_id: string;
+          created_at: string;
+          etag: string;
+          id: string;
+          key: string;
+          owner_id: string | null;
+          part_number: number;
+          size: number;
+          upload_id: string;
+          version: string;
+        };
+        Insert: {
+          bucket_id: string;
+          created_at?: string;
+          etag: string;
+          id?: string;
+          key: string;
+          owner_id?: string | null;
+          part_number: number;
+          size?: number;
+          upload_id: string;
+          version: string;
+        };
+        Update: {
+          bucket_id?: string;
+          created_at?: string;
+          etag?: string;
+          id?: string;
+          key?: string;
+          owner_id?: string | null;
+          part_number?: number;
+          size?: number;
+          upload_id?: string;
+          version?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey";
+            columns: ["bucket_id"];
+            isOneToOne: false;
+            referencedRelation: "buckets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey";
+            columns: ["upload_id"];
+            isOneToOne: false;
+            referencedRelation: "s3_multipart_uploads";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1074,6 +1703,37 @@ export type Database = {
         Returns: {
           size: number;
           bucket_id: string;
+        }[];
+      };
+      list_multipart_uploads_with_delimiter: {
+        Args: {
+          bucket_id: string;
+          prefix_param: string;
+          delimiter_param: string;
+          max_keys?: number;
+          next_key_token?: string;
+          next_upload_token?: string;
+        };
+        Returns: {
+          key: string;
+          id: string;
+          created_at: string;
+        }[];
+      };
+      list_objects_with_delimiter: {
+        Args: {
+          bucket_id: string;
+          prefix_param: string;
+          delimiter_param: string;
+          max_keys?: number;
+          start_after?: string;
+          next_token?: string;
+        };
+        Returns: {
+          name: string;
+          id: string;
+          metadata: Json;
+          updated_at: string;
         }[];
       };
       search: {

@@ -49,6 +49,7 @@ export const CompleteMovieSchema = z.object({
   description: z.string().min(10),
   release_date: z.string(),
   scheduled_release: z.string(),
+  duration: z.string(),
   watching_option: z.object({
     value: z.string(),
     label: z.string(),
@@ -177,7 +178,11 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
     movie_posters: [
       {
         url: null,
-        type: "poster-150x200",
+        type: "poster-150/200",
+      },
+      {
+        url: null,
+        type: "poster-16/9",
       },
     ],
   };
@@ -227,6 +232,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
             release_date: data.release_date,
             scheduled_release: data.scheduled_release,
             pricing_amount: data.pricing_amount,
+            duration: data.duration,
             discounted_pricing_amount: data.discounted_pricing_amount,
             watching_option: data.watching_option.value,
           })
@@ -376,6 +382,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
       fields: [
         "title",
         "description",
+        "duration",
         "release_date",
         "movie_languages",
         "movie_certificates",
@@ -532,6 +539,24 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
                         <Textarea
                           disabled={loading}
                           placeholder="Movie Description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Movie Duration in Seconds</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Movie Duration"
                           {...field}
                         />
                       </FormControl>
