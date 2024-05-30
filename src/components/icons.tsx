@@ -22,6 +22,7 @@ import {
   LucideProps,
   Moon,
   MoreVertical,
+  PanelBottom,
   Pizza,
   Plus,
   ScrollText,
@@ -72,6 +73,7 @@ export const Icons = {
   "scroll-text": ScrollText,
   tags: Tags,
   users: Users,
+  "panel-bottom-dashed": PanelBottom,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

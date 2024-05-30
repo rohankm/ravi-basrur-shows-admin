@@ -18,6 +18,7 @@ import useMutationData from "@/hooks/supabase/useMutationData";
 import { useRouter } from "next/navigation";
 import useDeleteSingleFile from "../../../hooks/supabase/useDeleteSingleFile";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ViewingHistoryList } from "@/components/users/viewing-history-list/client";
 
 function combineCastInformation(data) {
   const roleMap = {};
@@ -357,6 +358,15 @@ export default function DisplayMovie({ id }: { id: string }) {
                   }}
                 />
               )}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-5">
+            <AccordionTrigger className="text-xl font-bold">
+              Movie Viewing Histroy
+            </AccordionTrigger>
+            <AccordionContent>
+              <ViewingHistoryList movie_id={movieInfo?.id} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

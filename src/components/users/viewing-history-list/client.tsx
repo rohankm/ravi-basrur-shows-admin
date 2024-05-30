@@ -10,7 +10,8 @@ import { columns } from "./columns";
 import { Tables } from "@/types/database.types";
 
 interface Props {
-  user_id: "string";
+  user_id?: "string";
+  movie_id?: "string";
 }
 interface Option {
   label: string;
@@ -25,15 +26,15 @@ interface DataTableFilterField<TData> {
   options?: Option[];
 }
 
-export const ViewingHistoryList: React.FC<Props> = ({ user_id }) => {
+export const ViewingHistoryList: React.FC<Props> = ({ user_id, movie_id }) => {
   const router = useRouter();
   const pathName = usePathname();
 
   const filterFields: DataTableFilterField<Tables<"viewing_history">>[] = [
     {
-      label: "movie",
-      value: "movies->title",
-      placeholder: "Filter movie",
+      label: user_id ? "movie" : "Phone Number",
+      value: user_id ? "movies->title" : "profiles->phone_number",
+      placeholder: user_id ? "Filter movie" : "filter number",
     },
     {
       label: "Completed",
@@ -83,9 +84,15 @@ export const ViewingHistoryList: React.FC<Props> = ({ user_id }) => {
         filterFields={filterFields}
         columns={columns}
         tableName="viewing_history"
-        initialFixedFilter={{ profile_id: user_id }}
-        select="*,movies!inner(*)"
-        initalColumnVisiblity={{}}
+        initialFixedFilter={
+          user_id ? { profile_id: user_id } : { movie_id: movie_id }
+        }
+        select={
+          user_id ? "*,movies!inner(*)" : "*,movies!inner(*),profiles!inner(*)"
+        }
+        initalColumnVisiblity={
+          user_id ? { "profiles->phone_number": false } : {}
+        }
       />
     </>
   );

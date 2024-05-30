@@ -80,7 +80,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     title: "Home Page Slider",
     href: "/dashboard/home-page-slider",
-    icon: "user",
+    icon: "panel-bottom-dashed",
     label: "Users",
   },
 ];

@@ -38,6 +38,11 @@ export const columns: ColumnDef<Tables<"viewing_history">>[] = [
     header: "Movie",
   },
   {
+    accessorKey: "profiles->phone_number",
+    accessorFn: (row) => row?.profiles?.phone_number,
+    header: "User",
+  },
+  {
     accessorKey: "ip_address",
     header: "IP Address",
   },
