@@ -71,6 +71,12 @@ const NAV_ITEMS: NavItem[] = [
       },
     ],
   },
+  {
+    title: "Users",
+    href: "/dashboard/users",
+    icon: "user",
+    label: "Users",
+  },
 ];
 
 export function DashboardNav({
