@@ -179,6 +179,10 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
         url: null,
         type: "poster-150x200",
       },
+      {
+        url: null,
+        type: "poster-16x9",
+      },
     ],
   };
 

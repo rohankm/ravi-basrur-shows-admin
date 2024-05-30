@@ -106,9 +106,26 @@ export function EditMovieVideosAndPosters({
 
   console.log("sdfd", { defaultValues });
 
+  let newDefault = defaultValues;
+
+  if (defaultValues.movie_posters.length == 1) {
+    newDefault = {
+      ...newDefault,
+      movie_posters: [
+        ...newDefault.movie_posters,
+        {
+          url: null,
+          type: "poster-16x9",
+        },
+      ],
+    };
+  }
+
+  console.log(newDefault);
+
   const form = useForm<movieBasicType>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues: newDefault,
   });
   const {
     formState: { errors },
@@ -116,7 +133,7 @@ export function EditMovieVideosAndPosters({
 
   //   console.log(language.data);
   useEffect(() => {
-    form.reset(defaultValues);
+    form.reset(newDefault);
   }, [defaultValues]);
 
   const onClose = () => {
