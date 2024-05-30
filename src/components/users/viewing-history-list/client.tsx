@@ -25,32 +25,45 @@ interface DataTableFilterField<TData> {
   options?: Option[];
 }
 
-export const PaymentTransactionsList: React.FC<Props> = ({ user_id }) => {
+export const ViewingHistoryList: React.FC<Props> = ({ user_id }) => {
   const router = useRouter();
   const pathName = usePathname();
 
-  const filterFields: DataTableFilterField<Tables<"payment_transactions">>[] = [
+  const filterFields: DataTableFilterField<Tables<"viewing_history">>[] = [
     {
       label: "movie",
       value: "movies->title",
       placeholder: "Filter movie",
     },
-    // {
-    //   label: "Payment Gateway",
-    //   value: "payment_gateway",
-    //   placeholder: "Filter payment gateway",
-    // },
     {
-      label: "Status",
-      value: "status",
-      options: ["initiated", "pending", "success", "failed", "refunded"].map(
-        (status) => ({
-          label: status[0]?.toUpperCase() + status.slice(1),
-          value: status,
-          // icon: getStatusIcon(status),
-          withCount: true,
-        })
-      ),
+      label: "Completed",
+      value: "completed",
+      options: ["true", "false"].map((status) => ({
+        label: status[0]?.toUpperCase() + status.slice(1),
+        value: status,
+        // icon: getStatusIcon(status),
+        withCount: true,
+      })),
+    },
+    {
+      label: "Player Events",
+      value: "player_event",
+      options: [
+        "pause",
+        "play",
+        "completed",
+        "error",
+        "seek",
+        "subtitle",
+        "current_time",
+        "initial",
+        "back",
+      ].map((status) => ({
+        label: status[0]?.toUpperCase() + status.slice(1),
+        value: status,
+        // icon: getStatusIcon(status),
+        withCount: true,
+      })),
     },
     // {
     //   label: "Priority",
@@ -69,10 +82,10 @@ export const PaymentTransactionsList: React.FC<Props> = ({ user_id }) => {
       <DataTable
         filterFields={filterFields}
         columns={columns}
-        tableName="payment_transactions"
-        initialFixedFilter={{ user_id: user_id }}
+        tableName="viewing_history"
+        initialFixedFilter={{ profile_id: user_id }}
         select="*,movies!inner(*)"
-        initalColumnVisiblity={{ updated_at: false }}
+        initalColumnVisiblity={{}}
       />
     </>
   );

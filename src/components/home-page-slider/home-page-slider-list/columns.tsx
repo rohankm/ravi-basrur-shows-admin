@@ -5,7 +5,7 @@ import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tables } from "@/types/database.types";
 
-export const columns: ColumnDef<Tables<"profiles">>[] = [
+export const columns: ColumnDef<Tables<"home_slider">>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -26,24 +26,17 @@ export const columns: ColumnDef<Tables<"profiles">>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "first_name",
-    header: "First Name",
-    enableSorting: true,
-    filterFn: "includesString",
+    accessorKey: "movies->title",
+    accessorFn: (row) => row.movies.title,
+    header: "Movie",
   },
   {
-    accessorKey: "last_name",
-    header: "Last Name",
-    enableSorting: true,
-  },
-  {
-    accessorKey: "phone_number",
-    header: "Phone Number",
+    accessorKey: "movies_id",
+    header: "Movie Id",
   },
 
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
-    enableHiding: false,
   },
 ];

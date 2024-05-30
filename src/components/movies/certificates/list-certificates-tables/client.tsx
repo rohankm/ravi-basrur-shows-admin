@@ -3,12 +3,21 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@/constants/data";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface Props {}
+
+const filterFields: DataTableFilterField<Tables<"certificates">>[] = [
+  {
+    label: "Name",
+    value: "name",
+    placeholder: "Filter certificates",
+  },
+];
 
 export const Certificates: React.FC<Props> = ({}) => {
   const router = useRouter();
@@ -32,7 +41,11 @@ export const Certificates: React.FC<Props> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable searchKey="name" columns={columns} tableName="certificates" />
+      <DataTable
+        filterFields={filterFields}
+        columns={columns}
+        tableName="certificates"
+      />
     </>
   );
 };

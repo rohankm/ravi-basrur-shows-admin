@@ -7,12 +7,22 @@ import { User } from "@/constants/data";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import { Tables } from "@/types/database.types";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
 
 interface Props {}
 
 export const ListUsers: React.FC<Props> = ({}) => {
   const router = useRouter();
   const pathName = usePathname();
+
+  const filterFields: DataTableFilterField<Tables<"profiles">>[] = [
+    {
+      label: "Phone Number",
+      value: "phone_number",
+      placeholder: "Filter phone number",
+    },
+  ];
 
   return (
     <>
@@ -30,7 +40,7 @@ export const ListUsers: React.FC<Props> = ({}) => {
       <Separator />
 
       <DataTable
-        searchKey="phone_number"
+        filterFields={filterFields}
         columns={columns}
         tableName="profiles"
       />

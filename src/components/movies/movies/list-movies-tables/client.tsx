@@ -7,8 +7,18 @@ import { User } from "@/constants/data";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface Props {}
+
+const filterFields: DataTableFilterField<Tables<"movies">>[] = [
+  {
+    label: "Title",
+    value: "title",
+    placeholder: "Filter title",
+  },
+];
 
 export const ListMovies: React.FC<Props> = ({}) => {
   const router = useRouter();
@@ -29,7 +39,11 @@ export const ListMovies: React.FC<Props> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable searchKey="title" columns={columns} tableName="movies" />
+      <DataTable
+        filterFields={filterFields}
+        columns={columns}
+        tableName="movies"
+      />
     </>
   );
 };

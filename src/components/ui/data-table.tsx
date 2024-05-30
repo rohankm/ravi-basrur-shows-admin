@@ -5,6 +5,7 @@ import {
   ColumnFiltersState,
   PaginationState,
   SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -43,21 +44,36 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, RefreshCcw } from "lucide-react";
+import { DataTableAdvancedToolbar } from "./data-table/advanced/data-table-advanced-toolbar";
+import { DataTableToolbar } from "./data-table/data-table-toolbar";
+import { DataTableFilterField } from "./data-table/datatable.types";
 
 interface DataTableProps<TData, TValue> {
-  columns?: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData, TValue>[];
   data?: TData[];
-  searchKey?: string;
-
+  filterFields?: DataTableFilterField<TData>[];
   tableName?: keyof Database["public"]["Tables"];
+  advancedFilter?: boolean;
+  initialFixedFilter?: any;
+  select?: string;
+  defaultSort?: {
+    id: string;
+    desc: boolean;
+  }[];
+  initalColumnVisiblity?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchKey,
   tableName,
+  filterFields = [],
+  advancedFilter = false,
+  initialFixedFilter,
+  select = "*",
+  defaultSort = [{ id: "updated_at", desc: true }],
+  initalColumnVisiblity = { created_at: false, updated_at: false },
 }: DataTableProps<TData, TValue>) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
@@ -65,25 +81,74 @@ export function DataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(defaultSort);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    initalColumnVisiblity
+  );
+  const debouncedColumnFilters = useDebounce(columnFilters, 500);
 
   const memoQuery = useMemo(
-    () =>
-      supabase
-        .from(tableName!)
-        .select("*", { count: "exact" })
-        .ilike(searchKey!, `%${debouncedSearch}%`)
-        .range(
-          pagination.pageIndex * pagination.pageSize,
-          pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
-        ),
-    [pagination, debouncedSearch, searchKey, tableName]
+    () => {
+      let query = supabase.from(tableName!).select(select, { count: "exact" });
+
+      // Apply column filters
+      for (const { id, value } of debouncedColumnFilters) {
+        if (value) {
+          switch (typeof value) {
+            case "object": {
+              // Handle multiple value filters (e.g., OR condition)
+              query = query.filter(
+                id,
+                "in",
+                `(${(value as { join(): string }).join()})`
+              );
+              break;
+            }
+            default: {
+              // Handle other column types or filter combinations (optional)
+              console.log(id.replace("->", "."));
+              query = query.filter(
+                id.replace("->", "."),
+                "ilike",
+                `%${value}%`
+              ); // Default string filter (ilike)
+            }
+          }
+        }
+      }
+      if (sorting && sorting.length > 0) {
+        const { id, desc } = sorting[0];
+        query = query.order(id, { ascending: !desc });
+      }
+
+      // Apply pagination (unchanged)
+      query = query.range(
+        pagination.pageIndex * pagination.pageSize,
+        pagination.pageIndex * pagination.pageSize + pagination.pageSize - 1
+      );
+
+      if (initialFixedFilter) query = query.match(initialFixedFilter);
+
+      return query;
+    },
+    [
+      pagination,
+      debouncedSearch,
+      tableName,
+      debouncedColumnFilters,
+      initialFixedFilter,
+      select,
+      sorting,
+    ] // Include columnFilters in dependencies
   );
   const {
     data: resultData,
     count,
     isFetching,
+    isLoading,
+    refetch,
+    error,
   } = useFetchData({
     query: memoQuery,
     options: {
@@ -92,16 +157,19 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log({ tableName, resultData });
+  console.log({ tableName, resultData, error });
+  console.log(resultData?.length);
 
   // console.log(pagination, data?.pages?.[pagination.pageIndex]);
   const table = useReactTable({
     data: [...(data ? data : resultData ?? [])],
+    //@ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
+      columnVisibility,
       pagination,
       sorting,
       columnFilters,
@@ -109,83 +177,36 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
+    onColumnVisibilityChange: setColumnVisibility,
     rowCount: count ?? -1,
     manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     // manualPagination: true,
     // pageCount: -1,
     // initialState: { pageIndex: 0 },
   });
 
-  console.log({ columnFilters });
+  console.log({ columnFilters, sorting, columnVisibility });
   /* this can be used to get the selectedrows 
   console.log("value", table.getFilteredSelectedRowModel()); */
-
-  const handleFilterChange = (value, columnId) => {
-    const column = table.getColumn(columnId);
-    if (column) {
-      column.setFilterValue(value);
-    }
-  };
 
   return (
     <>
       <div className="flex items-center ">
-        <Input
-          placeholder={`Search ${searchKey}...`}
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className="w-full md:max-w-sm"
-        />
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder ? null : (
-                  <Input
-                    placeholder={`Filter ${
-                      table.getColumn(header.id).columnDef.header
-                    }...`}
-                    value={
-                      (table
-                        .getColumn(header.id)
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) =>
-                      handleFilterChange(event.target.value, header.id)
-                    }
-                    className="max-w-sm"
-                  />
-                )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+        {advancedFilter ? (
+          <DataTableAdvancedToolbar table={table} filterFields={filterFields}>
+            {/* <TasksTableToolbarActions table={table} /> */}
+          </DataTableAdvancedToolbar>
+        ) : (
+          <DataTableToolbar table={table} filterFields={filterFields}>
+            {/* <TasksTableToolbarActions table={table} /> */}
+            <Button variant="outline" size="sm" onClick={refetch}>
+              <RefreshCcw className="mr-2 size-4" aria-hidden="true" />
+              Refresh
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </DataTableToolbar>
+        )}
       </div>
       <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
         <Table className="relative">
@@ -224,7 +245,7 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
-            ) : isFetching ? (
+            ) : isLoading ? (
               Array(10)
                 .fill(0)
                 .map((d, i) => (
@@ -248,7 +269,9 @@ export function DataTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <DataTablePagination table={table} />
+      <div className="mt-5">
+        <DataTablePagination table={table} />
+      </div>
     </>
   );
 }

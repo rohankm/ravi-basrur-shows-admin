@@ -12,8 +12,17 @@ import { supabase } from "@/lib/supabase/client";
 import { useMemo } from "react";
 import useInfiniteFetchData from "@/hooks/supabase/useInfiniteFetchData";
 import { keepPreviousData } from "@tanstack/react-query";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface ProductsClientProps {}
+const filterFields: DataTableFilterField<Tables<"genres">>[] = [
+  {
+    label: "Name",
+    value: "name",
+    placeholder: "Filter genres",
+  },
+];
 
 export const Genres: React.FC<ProductsClientProps> = ({}) => {
   const router = useRouter();
@@ -34,7 +43,11 @@ export const Genres: React.FC<ProductsClientProps> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable searchKey="name" columns={columns} tableName="genres" />
+      <DataTable
+        filterFields={filterFields}
+        columns={columns}
+        tableName="genres"
+      />
     </>
   );
 };

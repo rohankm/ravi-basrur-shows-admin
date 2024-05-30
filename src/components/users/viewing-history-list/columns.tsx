@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 
-export const columns: ColumnDef<Tables<"payment_transactions">>[] = [
+export const columns: ColumnDef<Tables<"viewing_history">>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -28,68 +28,60 @@ export const columns: ColumnDef<Tables<"payment_transactions">>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "id",
-    header: "Id",
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: "Id",
+  // },
   {
     accessorKey: "movies->title",
     accessorFn: (row) => row.movies.title,
     header: "Movie",
   },
   {
-    accessorKey: "amount",
-    header: "Amount",
+    accessorKey: "ip_address",
+    header: "IP Address",
   },
 
   {
     accessorKey: "created_at",
+
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ getValue }) => {
-      return new Date(getValue() as string).toLocaleString();
+      return new Date(getValue()).toLocaleString();
     },
   },
 
   {
     accessorKey: "updated_at",
+
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ getValue }) => {
-      return new Date(getValue() as string).toLocaleString();
+      return new Date(getValue()).toLocaleString();
     },
   },
 
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ getValue }) => {
-      const variant = useMemo(() => {
-        switch (getValue()) {
-          case "initiated":
-            return "primary";
-          case "pending":
-            return "warning";
-          case "failed":
-            return "destructive";
-          // ... other status cases
-          default:
-            return "secondary";
-        }
-      }, [getValue]);
+    accessorKey: "player_event",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Player Event" />
+    ),
+  },
 
-      return <Badge variant={variant}>{getValue()}</Badge>;
-    },
+  {
+    accessorKey: "device_type",
+    header: "Device Type",
+  },
+
+  {
+    accessorKey: "completed",
+    header: "Completed",
   },
   {
-    accessorKey: "payment_gateway",
-    header: "Payment Gateway",
+    id: "actions",
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
-
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <CellAction data={row.original} />,
-  // },
 ];

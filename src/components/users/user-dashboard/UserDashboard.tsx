@@ -7,6 +7,7 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
 import { PaymentTransactionsList } from "../payment-transaction-list/client";
+import { ViewingHistoryList } from "../viewing-history-list/client";
 
 export default function UserDashboard({ userId }: { userId: string }) {
   const {
@@ -43,7 +44,9 @@ export default function UserDashboard({ userId }: { userId: string }) {
         <TabsContent value="account">
           <PaymentTransactionsList user_id={userId} />
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="password">
+          <ViewingHistoryList user_id={userId} />{" "}
+        </TabsContent>
       </Tabs>
     </div>
   );

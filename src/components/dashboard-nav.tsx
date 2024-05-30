@@ -77,6 +77,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: "user",
     label: "Users",
   },
+  {
+    title: "Home Page Slider",
+    href: "/dashboard/home-page-slider",
+    icon: "user",
+    label: "Users",
+  },
 ];
 
 export function DashboardNav({

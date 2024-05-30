@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@/constants/data";
+
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
@@ -12,8 +12,18 @@ import { supabase } from "@/lib/supabase/client";
 import { useMemo } from "react";
 import useInfiniteFetchData from "@/hooks/supabase/useInfiniteFetchData";
 import { keepPreviousData } from "@tanstack/react-query";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface ProductsClientProps {}
+
+const filterFields: DataTableFilterField<Tables<"tags">>[] = [
+  {
+    label: "Name",
+    value: "name",
+    placeholder: "Filter tags",
+  },
+];
 
 export const Tags: React.FC<ProductsClientProps> = ({}) => {
   const router = useRouter();
@@ -34,7 +44,11 @@ export const Tags: React.FC<ProductsClientProps> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable searchKey="name" columns={columns} tableName="tags" />
+      <DataTable
+        filterFields={filterFields}
+        columns={columns}
+        tableName="tags"
+      />
     </>
   );
 };
