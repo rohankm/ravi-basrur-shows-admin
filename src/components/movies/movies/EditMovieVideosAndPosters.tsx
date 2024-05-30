@@ -68,7 +68,7 @@ const formSchema = z.object({
           z.any(), // For File objects
         ]),
         type: z.string(),
-        _id: z.string().uuid(),
+        _id: z.string().uuid().optional(),
       })
     )
     .min(1),
@@ -106,34 +106,19 @@ export function EditMovieVideosAndPosters({
 
   console.log("sdfd", { defaultValues });
 
-  let newDefault = defaultValues;
-
-  if (defaultValues.movie_posters.length == 1) {
-    newDefault = {
-      ...newDefault,
-      movie_posters: [
-        ...newDefault.movie_posters,
-        {
-          url: null,
-          type: "poster-16x9",
-        },
-      ],
-    };
-  }
-
-  console.log(newDefault);
-
   const form = useForm<movieBasicType>({
     resolver: zodResolver(formSchema),
-    defaultValues: newDefault,
+    defaultValues,
   });
   const {
     formState: { errors },
   } = form;
 
+  console.log({ errors });
+
   //   console.log(language.data);
   useEffect(() => {
-    form.reset(newDefault);
+    form.reset(defaultValues);
   }, [defaultValues]);
 
   const onClose = () => {
@@ -198,11 +183,28 @@ export function EditMovieVideosAndPosters({
 
       await Promise.all(
         data.movie_posters.map(async (movie_poster, index) => {
+          console.log({ movie_poster });
           const uploadUrl = await upsertFile({
             image: movie_poster.url,
-            originalImage: defaultValues.movie_posters[index].url,
+            originalImage: movie_poster._id
+              ? defaultValues.movie_posters[index].url
+              : undefined,
             bucket: "movie_posters",
           });
+
+          if (!movie_poster._id) {
+            const movieposter = await mutate.mutateAsync({
+              query: supabase
+                .from("movie_posters")
+                .insert({
+                  movie_id: movie_id,
+                  type: movie_poster.type,
+                  url: uploadUrl,
+                })
+                .select(),
+            });
+          }
+
           // const movieposter = await mutate.mutateAsync({
           //   query: supabase
           //     .from("movie_posters")

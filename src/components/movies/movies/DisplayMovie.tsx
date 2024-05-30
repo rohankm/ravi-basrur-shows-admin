@@ -344,13 +344,28 @@ export default function DisplayMovie({ id }: { id: string }) {
                       };
                     }),
 
-                    movie_posters: movieInfo.movie_posters.map((d) => {
-                      return {
-                        url: d.url,
-                        type: d.type,
-                        _id: d.id,
-                      };
-                    }),
+                    movie_posters:
+                      movieInfo.movie_posters.length == 1
+                        ? [
+                            ...movieInfo.movie_posters.map((d) => {
+                              return {
+                                url: d.url,
+                                type: d.type,
+                                _id: d.id,
+                              };
+                            }),
+                            {
+                              url: null,
+                              type: "poster-16x9",
+                            },
+                          ]
+                        : movieInfo.movie_posters.map((d) => {
+                            return {
+                              url: d.url,
+                              type: d.type,
+                              _id: d.id,
+                            };
+                          }),
                   }}
                   onClose={() => {
                     refetch();
