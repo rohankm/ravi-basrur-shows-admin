@@ -1,8 +1,6 @@
 import BreadCrumb from "@/components/breadcrumb";
-import { Cast } from "@/components/movies/cast/list-cast-tables/client";
+
 import DisplayMovie from "@/components/movies/movies/DisplayMovie";
-import { ListMovies } from "@/components/movies/movies/list-movies-tables/client";
-import { useSearchParams } from "next/navigation";
 
 import React from "react";
 

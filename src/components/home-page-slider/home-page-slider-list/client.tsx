@@ -3,39 +3,43 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import useFetchData from "@/hooks/supabase/useFetchData";
+import { supabase } from "@/lib/supabase/client";
+import { useMemo } from "react";
+import useInfiniteFetchData from "@/hooks/supabase/useInfiniteFetchData";
+import { keepPreviousData } from "@tanstack/react-query";
 import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
 import { Tables } from "@/types/database.types";
 
-interface Props {}
+interface ProductsClientProps {}
 
-const filterFields: DataTableFilterField<Tables<"cast_information">>[] = [
+const filterFields: DataTableFilterField<Tables<"home_slider">>[] = [
   {
-    label: "First Name",
-    value: "first_name",
-    placeholder: "Filter first name",
-  },
-  {
-    label: "Last Name",
-    value: "last_name",
-    placeholder: "Filter last name",
+    label: "movie",
+    value: "movies->title",
+    placeholder: "Filter movie",
   },
 ];
 
-export const Cast: React.FC<Props> = ({}) => {
+export const HomePageSliderList: React.FC<ProductsClientProps> = ({}) => {
   const router = useRouter();
   const pathName = usePathname();
 
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Cast`} description="Manage movie cast" />
+        <Heading
+          title={`Home Page Slider`}
+          description="Manage home page slider"
+        />
         <Button
           className="text-xs md:text-sm"
           onClick={() => {
-            router.push(pathName + "?new_cast=true");
+            router.push(pathName + "?new_home_page_slider=true");
           }}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
@@ -46,7 +50,8 @@ export const Cast: React.FC<Props> = ({}) => {
       <DataTable
         filterFields={filterFields}
         columns={columns}
-        tableName="cast_information"
+        tableName="home_slider"
+        select="*,movies!inner(*)"
       />
     </>
   );

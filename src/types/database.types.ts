@@ -1173,8 +1173,6 @@ export type Database = {
       };
       viewing_history: {
         Row: {
-          completed: boolean;
-          content: string;
           created_at: string;
           current_time: number;
           device_type: string | null;
@@ -1188,8 +1186,6 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          completed?: boolean;
-          content: string;
           created_at?: string;
           current_time?: number;
           device_type?: string | null;
@@ -1203,8 +1199,6 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          completed?: boolean;
-          content?: string;
           created_at?: string;
           current_time?: number;
           device_type?: string | null;
@@ -1251,65 +1245,6 @@ export type Database = {
             columns: ["tv_show_episode_id"];
             isOneToOne: false;
             referencedRelation: "episodes";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      viewing_history_logs: {
-        Row: {
-          completed: boolean;
-          content: string | null;
-          created_at: string;
-          current_time: number;
-          device_type: string | null;
-          id: string;
-          ip_address: string | null;
-          movie_id: string | null;
-          others: Json | null;
-          player_event: Database["public"]["Enums"]["player_events"];
-          profile_id: string;
-          tv_show_episode_id: string | null;
-          updated_at: string;
-          viewing_history_id: string;
-        };
-        Insert: {
-          completed?: boolean;
-          content?: string | null;
-          created_at?: string;
-          current_time?: number;
-          device_type?: string | null;
-          id?: string;
-          ip_address?: string | null;
-          movie_id?: string | null;
-          others?: Json | null;
-          player_event: Database["public"]["Enums"]["player_events"];
-          profile_id: string;
-          tv_show_episode_id?: string | null;
-          updated_at?: string;
-          viewing_history_id: string;
-        };
-        Update: {
-          completed?: boolean;
-          content?: string | null;
-          created_at?: string;
-          current_time?: number;
-          device_type?: string | null;
-          id?: string;
-          ip_address?: string | null;
-          movie_id?: string | null;
-          others?: Json | null;
-          player_event?: Database["public"]["Enums"]["player_events"];
-          profile_id?: string;
-          tv_show_episode_id?: string | null;
-          updated_at?: string;
-          viewing_history_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "viewing_history_logs_viewing_history_id_fkey";
-            columns: ["viewing_history_id"];
-            isOneToOne: false;
-            referencedRelation: "viewing_history";
             referencedColumns: ["id"];
           }
         ];

@@ -7,8 +7,18 @@ import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface Props {}
+
+const filterFields: DataTableFilterField<Tables<"languages">>[] = [
+  {
+    label: "Name",
+    value: "name",
+    placeholder: "Filter languages",
+  },
+];
 
 export const Languages: React.FC<Props> = ({}) => {
   const router = useRouter();
@@ -29,7 +39,11 @@ export const Languages: React.FC<Props> = ({}) => {
       </div>
       <Separator />
 
-      <DataTable searchKey="name" columns={columns} tableName="languages" />
+      <DataTable
+        filterFields={filterFields}
+        columns={columns}
+        tableName="languages"
+      />
     </>
   );
 };

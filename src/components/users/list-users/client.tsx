@@ -3,50 +3,46 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+import { User } from "@/constants/data";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
-import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
 import { Tables } from "@/types/database.types";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
 
 interface Props {}
 
-const filterFields: DataTableFilterField<Tables<"cast_information">>[] = [
-  {
-    label: "First Name",
-    value: "first_name",
-    placeholder: "Filter first name",
-  },
-  {
-    label: "Last Name",
-    value: "last_name",
-    placeholder: "Filter last name",
-  },
-];
-
-export const Cast: React.FC<Props> = ({}) => {
+export const ListUsers: React.FC<Props> = ({}) => {
   const router = useRouter();
   const pathName = usePathname();
+
+  const filterFields: DataTableFilterField<Tables<"profiles">>[] = [
+    {
+      label: "Phone Number",
+      value: "phone_number",
+      placeholder: "Filter phone number",
+    },
+  ];
 
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Cast`} description="Manage movie cast" />
-        <Button
+        <Heading title={`Users`} description="Manage users" />
+        {/* <Button
           className="text-xs md:text-sm"
           onClick={() => {
-            router.push(pathName + "?new_cast=true");
+            router.push("/dashboard/movies/create-movie");
           }}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button>
+        </Button> */}
       </div>
       <Separator />
 
       <DataTable
         filterFields={filterFields}
         columns={columns}
-        tableName="cast_information"
+        tableName="profiles"
       />
     </>
   );

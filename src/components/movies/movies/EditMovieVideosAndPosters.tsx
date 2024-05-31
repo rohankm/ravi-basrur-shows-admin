@@ -68,7 +68,7 @@ const formSchema = z.object({
           z.any(), // For File objects
         ]),
         type: z.string(),
-        _id: z.string().uuid(),
+        _id: z.string().uuid().optional(),
       })
     )
     .min(1),
@@ -113,6 +113,8 @@ export function EditMovieVideosAndPosters({
   const {
     formState: { errors },
   } = form;
+
+  console.log({ errors });
 
   //   console.log(language.data);
   useEffect(() => {
@@ -181,11 +183,28 @@ export function EditMovieVideosAndPosters({
 
       await Promise.all(
         data.movie_posters.map(async (movie_poster, index) => {
+          console.log({ movie_poster });
           const uploadUrl = await upsertFile({
             image: movie_poster.url,
-            originalImage: defaultValues.movie_posters[index].url,
+            originalImage: movie_poster._id
+              ? defaultValues.movie_posters[index].url
+              : undefined,
             bucket: "movie_posters",
           });
+
+          if (!movie_poster._id) {
+            const movieposter = await mutate.mutateAsync({
+              query: supabase
+                .from("movie_posters")
+                .insert({
+                  movie_id: movie_id,
+                  type: movie_poster.type,
+                  url: uploadUrl,
+                })
+                .select(),
+            });
+          }
+
           // const movieposter = await mutate.mutateAsync({
           //   query: supabase
           //     .from("movie_posters")
@@ -320,28 +339,28 @@ export function EditMovieVideosAndPosters({
                             const watchFields = form.watch([
                               `movie_videos.${index}`,
                             ]);
-                            console.log({ watchFields });
-                            console.log({ fieldInner });
-                            const { data } = useFetchData({
-                              query: supabase
-                                .from("video_providers")
-                                .select("*")
-                                .match({
-                                  id: watchFields[0]?.provider?.value,
-                                })
-                                .single(),
-                              options: {
-                                enabled: !!watchFields[0]?.provider?.value,
-                              },
-                            });
-                            console.log({ data });
+                            // console.log({ watchFields });
+                            // console.log({ fieldInner });
+                            // const { data } = useFetchData({
+                            //   query: supabase
+                            //     .from("video_providers")
+                            //     .select("*")
+                            //     .match({
+                            //       id: watchFields[0]?.provider?.value,
+                            //     })
+                            //     .single(),
+                            //   options: {
+                            //     enabled: !!watchFields[0]?.provider?.value,
+                            //   },
+                            // });
+                            // console.log({ data });
 
-                            useEffect(() => {
-                              data &&
-                                fieldInner.onChange(
-                                  JSON.stringify(data.fields)
-                                );
-                            }, [data]);
+                            // useEffect(() => {
+                            //   data &&
+                            //     fieldInner.onChange(
+                            //       JSON.stringify(data.fields)
+                            //     );
+                            // }, [data]);
 
                             // console.log(
                             //   { data },
