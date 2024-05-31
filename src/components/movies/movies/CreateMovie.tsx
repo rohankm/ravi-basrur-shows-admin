@@ -178,15 +178,15 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
     movie_posters: [
       {
         url: null,
-        type: "poster-150/200",
-      },
-      {
-        url: null,
-        type: "poster-16/9",
+        type: "poster-150x200",
       },
       {
         url: null,
         type: "poster-16x9",
+      },
+      {
+        url: null,
+        type: "title",
       },
     ],
   };
@@ -1267,9 +1267,13 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
                                     <UppyComponent
                                       field={fieldInner}
                                       aspectRatio={
-                                        type.split("x")[0] / type.split("x")[1]
+                                        type?.split("x")
+                                          ? type.split("x")[0] /
+                                            type.split("x")[1]
+                                          : undefined
                                       }
-                                      bucket={"cast_images"}
+                                      bucket={"movie_posters"}
+                                      editOnSelect={!!type?.split("x")}
                                     />
                                   </FormControl>
                                   <FormMessage />

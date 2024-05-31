@@ -363,6 +363,10 @@ export default function DisplayMovie({ id }: { id: string }) {
                               url: null,
                               type: "poster-16x9",
                             },
+                            {
+                              url: null,
+                              type: "title",
+                            },
                           ]
                         : movieInfo.movie_posters.map((d) => {
                             return {

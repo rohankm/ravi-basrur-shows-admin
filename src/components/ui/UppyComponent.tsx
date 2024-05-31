@@ -14,10 +14,12 @@ export default function UppyComponent({
   field,
   aspectRatio = 1 / 1,
   bucket,
+  editOnSelect = true,
 }: {
   field: ControllerRenderProps<any, any>;
   aspectRatio?: number;
   bucket: string;
+  editOnSelect?: boolean;
 }) {
   const uppy = useMemo(
     () =>
@@ -32,6 +34,9 @@ export default function UppyComponent({
 
         autoProceed: false,
       })
+        .on("file-added", () => {
+          if (!editOnSelect) uppy.upload();
+        })
         .use(ImageEditor, {
           target: "",
           cropperOptions: {
@@ -104,7 +109,7 @@ export default function UppyComponent({
       plugins={["ImageEditor"]}
       proudlyDisplayPoweredByUppy={false}
       hideUploadButton={true}
-      autoOpenFileEditor={true}
+      autoOpenFileEditor={editOnSelect}
     />
   );
 }

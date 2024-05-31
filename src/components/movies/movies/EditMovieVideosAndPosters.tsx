@@ -393,6 +393,9 @@ export function EditMovieVideosAndPosters({
               <p>Photos</p>
               {movie_posters.fields?.map((field, index) => {
                 const type = field.type.split("-")[1];
+
+                console.log(field);
+
                 return (
                   <div
                     className={cn(" gap-8 border p-4 rounded-md relative mb-4")}
@@ -418,9 +421,13 @@ export function EditMovieVideosAndPosters({
                                   <UppyComponent
                                     field={fieldInner}
                                     aspectRatio={
-                                      type.split("x")[0] / type.split("x")[1]
+                                      type?.split("x")
+                                        ? type.split("x")[0] /
+                                          type.split("x")[1]
+                                        : undefined
                                     }
-                                    bucket={"cast_images"}
+                                    bucket={"movie_posters"}
+                                    editOnSelect={!!type?.split("x")}
                                   />
                                 </FormControl>
                                 <FormMessage />
