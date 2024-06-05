@@ -94,6 +94,7 @@ const formSchema = z.object({
       })
     )
     .min(1),
+  slug: z.string().regex(/^[a-z](-?[a-z])*$/),
 });
 
 type movieBasicType = z.infer<typeof formSchema>;
@@ -169,6 +170,7 @@ export function EditBasicInformation({
             description: data.description,
             duration: data.duration,
             release_date: data.release_date,
+            slug: data.slug,
           })
           .match({ id: movie_id }),
       });
@@ -387,6 +389,19 @@ export function EditBasicInformation({
                         placeholder="Movie Duration"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input type="string" placeholder="slug" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

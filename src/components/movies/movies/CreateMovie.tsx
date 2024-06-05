@@ -50,6 +50,7 @@ export const CompleteMovieSchema = z.object({
   release_date: z.string(),
   scheduled_release: z.string(),
   duration: z.string(),
+  slug: z.string().regex(/^[a-z](-?[a-z])*$/),
   watching_option: z.object({
     value: z.string(),
     label: z.string(),
@@ -392,6 +393,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
         "movie_certificates",
         "movie_genres",
         "movie_tags",
+        "slug",
       ],
     },
     {
@@ -561,6 +563,24 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
                           type="number"
                           disabled={loading}
                           placeholder="Movie Duration"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="string"
+                          disabled={loading}
+                          placeholder="slug"
                           {...field}
                         />
                       </FormControl>

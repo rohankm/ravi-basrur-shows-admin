@@ -103,6 +103,7 @@ export default function DisplayMovie({ id }: { id: string }) {
                 title="Duration"
                 content={movieInfo?.duration + "s"}
               />
+              <DisplayCard title="slug" content={movieInfo?.slug} />
               <DisplayCard
                 title="Release Date"
                 content={new Date(movieInfo?.release_date).toDateString()}
@@ -174,7 +175,8 @@ export default function DisplayMovie({ id }: { id: string }) {
                         };
                       }
                     ),
-                    duration: movieInfo.duration,
+                    duration: movieInfo.duration?.toString(),
+                    slug: movieInfo.slug,
                     movie_tags: movieInfo.movie_tags.map((d) => {
                       return {
                         label: d.tags?.name,
