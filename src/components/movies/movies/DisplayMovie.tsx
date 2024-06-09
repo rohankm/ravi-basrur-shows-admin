@@ -367,6 +367,10 @@ export default function DisplayMovie({ id }: { id: string }) {
                             },
                             {
                               url: null,
+                              type: "homebanner-16x7",
+                            },
+                            {
+                              url: null,
                               type: "title",
                             },
                           ]

@@ -187,6 +187,10 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
       },
       {
         url: null,
+        type: "homebanner-16x7",
+      },
+      {
+        url: null,
         type: "title",
       },
     ],
