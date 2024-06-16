@@ -339,20 +339,40 @@ export default function DisplayMovie({ id }: { id: string }) {
                   open={editVideos}
                   movie_id={movieInfo.id}
                   defaultValues={{
-                    movie_videos: movieInfo.movie_videos.map((d) => {
-                      return {
-                        content: JSON.stringify(d.content),
-                        type: d.type,
-                        provider: {
-                          label: d.video_providers.name,
-                          value: d.video_providers.id,
-                        },
-                        _id: d.id,
-                      };
-                    }),
+                    movie_videos:
+                      movieInfo.movie_videos.length < 3
+                        ? [
+                            ...movieInfo.movie_videos.map((d) => {
+                              return {
+                                content: JSON.stringify(d.content),
+                                type: d.type,
+                                provider: {
+                                  label: d.video_providers.name,
+                                  value: d.video_providers.id,
+                                },
+                                _id: d.id,
+                              };
+                            }),
+                            {
+                              content: null,
+                              type: "teaser",
+                              provider: null,
+                            },
+                          ]
+                        : movieInfo.movie_videos.map((d) => {
+                            return {
+                              content: JSON.stringify(d.content),
+                              type: d.type,
+                              provider: {
+                                label: d.video_providers.name,
+                                value: d.video_providers.id,
+                              },
+                              _id: d.id,
+                            };
+                          }),
 
                     movie_posters:
-                      movieInfo.movie_posters.length == 1
+                      movieInfo.movie_posters.length < 4
                         ? [
                             ...movieInfo.movie_posters.map((d) => {
                               return {
@@ -363,11 +383,11 @@ export default function DisplayMovie({ id }: { id: string }) {
                             }),
                             {
                               url: null,
-                              type: "poster-16x9",
+                              type: "homebanner-16x5",
                             },
                             {
                               url: null,
-                              type: "homebanner-16x7",
+                              type: "playerthumbnail-16x9",
                             },
                             {
                               url: null,

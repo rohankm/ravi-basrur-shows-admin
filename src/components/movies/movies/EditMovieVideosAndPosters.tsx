@@ -82,7 +82,7 @@ const formSchema = z.object({
           label: z.string(),
           value: z.string().uuid(),
         }),
-        _id: z.string().uuid(),
+        _id: z.string().uuid().optional(),
       })
     )
     .min(1),
@@ -168,16 +168,27 @@ export function EditMovieVideosAndPosters({
     try {
       await Promise.all(
         data.movie_videos.map(async (movie_video) => {
-          const MovieVideo = await mutate.mutateAsync({
-            query: supabase
-              .from("movie_videos")
-              .update({
+          if (!movie_video._id) {
+            const MovieVideo = await mutate.mutateAsync({
+              query: supabase.from("movie_videos").insert({
                 type: movie_video.type,
                 content: JSON.parse(movie_video.content),
                 provider: movie_video.provider.value,
-              })
-              .match({ id: movie_video._id }),
-          });
+                movie_id: movie_id,
+              }),
+            });
+          } else {
+            const MovieVideo = await mutate.mutateAsync({
+              query: supabase
+                .from("movie_videos")
+                .update({
+                  type: movie_video.type,
+                  content: JSON.parse(movie_video.content),
+                  provider: movie_video.provider.value,
+                })
+                .match({ id: movie_video._id }),
+            });
+          }
         })
       );
 

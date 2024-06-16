@@ -175,6 +175,11 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
         type: "trailer",
         provider: null,
       },
+      {
+        content: null,
+        type: "teaser",
+        provider: null,
+      },
     ],
     movie_posters: [
       {
@@ -183,11 +188,11 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
       },
       {
         url: null,
-        type: "poster-16x9",
+        type: "homebanner-16x5",
       },
       {
         url: null,
-        type: "homebanner-16x7",
+        type: "playerthumbnail-16x9",
       },
       {
         url: null,

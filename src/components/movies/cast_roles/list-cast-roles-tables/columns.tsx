@@ -29,7 +29,10 @@ export const columns: ColumnDef<Tables<"cast_roles">>[] = [
     accessorKey: "name",
     header: "NAME",
   },
-
+  {
+    accessorKey: "priority",
+    header: "PRIORITY",
+  },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
