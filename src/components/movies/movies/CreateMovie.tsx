@@ -242,7 +242,7 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
             title: data.title,
             description: data.description,
             is_released: true,
-            is_draft: false,
+            is_draft: true,
             release_date: data.release_date,
             scheduled_release: data.scheduled_release,
             pricing_amount: data.pricing_amount,

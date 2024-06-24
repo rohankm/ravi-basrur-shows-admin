@@ -29,6 +29,10 @@ export const columns: ColumnDef<Tables<"movies">>[] = [
     accessorKey: "title",
     header: "Title",
   },
+  {
+    accessorKey: "is_draft",
+    header: "Draft",
+  },
 
   {
     id: "actions",

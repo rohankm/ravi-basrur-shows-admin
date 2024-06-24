@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import useDeleteSingleFile from "../../../hooks/supabase/useDeleteSingleFile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ViewingHistoryList } from "@/components/users/viewing-history-list/client";
+import { toast } from "sonner";
 
 function combineCastInformation(data) {
   const roleMap = {};
@@ -191,6 +192,55 @@ export default function DisplayMovie({ id }: { id: string }) {
                   }}
                 />
               )}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-6">
+            <AccordionTrigger className="text-xl font-bold">
+              Published Status
+            </AccordionTrigger>
+            <AccordionContent>
+              <DisplayCard
+                title="Published"
+                content={JSON.parse(!movieInfo?.is_draft).toString()}
+              />
+              <DisplayCard
+                title="Draft"
+                content={movieInfo?.is_draft.toString()}
+              />
+
+              <Button
+                className="mt-5"
+                onClick={async () => {
+                  const userconfirm = confirm(
+                    `Are you sure you want to change to ${
+                      movieInfo?.is_draft ? "Published" : "Draft"
+                    }`
+                  );
+
+                  if (userconfirm) {
+                    try {
+                      const movieRsp = await mutate.mutateAsync({
+                        query: supabase
+                          .from("movies")
+                          .update({
+                            is_draft: !movieInfo?.is_draft,
+                          })
+                          .match({ id: movieInfo?.id }),
+                      });
+
+                      toast("Movie has been Update.");
+                      refetch();
+                    } catch (err) {
+                      console.log(err);
+                      toast.error("Error updating");
+                    }
+                  }
+                }}
+              >
+                {movieInfo?.is_draft
+                  ? "Change to Published"
+                  : "Change to Draft"}
+              </Button>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">

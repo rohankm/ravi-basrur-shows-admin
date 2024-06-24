@@ -103,7 +103,9 @@ export function CreateHomePageSlider({ open = false }: { open: boolean }) {
                     count,
                     isFetching,
                   } = useFetchData({
-                    query: supabase.from("movies").select("*"),
+                    query: supabase.from("movies").select("*").match({
+                      is_draft: false,
+                    }),
                   });
                   const initialOptions = useMemo(() => {
                     if (!resultData) {
@@ -126,7 +128,10 @@ export function CreateHomePageSlider({ open = false }: { open: boolean }) {
                         const { data, error } = await supabase
                           .from("movies")
                           .select("*")
-                          .ilike("title", `%${inputValue}%`);
+                          .ilike("title", `%${inputValue}%`)
+                          .match({
+                            is_draft: false,
+                          });
 
                         // console.log(data, error);
                         if (!data) {
