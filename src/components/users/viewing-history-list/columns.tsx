@@ -51,6 +51,10 @@ export const columns: ColumnDef<Tables<"viewing_history">>[] = [
     accessorKey: "ip_address",
     header: "IP Address",
   },
+  {
+    accessorKey: "type",
+    header: "type",
+  },
 
   {
     accessorKey: "created_at",
