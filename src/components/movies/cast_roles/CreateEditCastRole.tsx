@@ -36,6 +36,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const formSchema = z.object({
   name: z.string().min(3),
+  priority: z.string(),
 });
 
 type CastRoleType = z.infer<typeof formSchema>;
@@ -85,7 +86,10 @@ export function CreateEditCastRole({
     console.log(data);
     try {
       const rsp = await mutate.mutateAsync({
-        query: supabase.from("cast_roles").insert({ name: data.name }).select(),
+        query: supabase
+          .from("cast_roles")
+          .insert({ name: data.name, priority: data.priority })
+          .select(),
       });
 
       console.log(rsp);
@@ -107,7 +111,7 @@ export function CreateEditCastRole({
       const rsp = await mutate.mutateAsync({
         query: supabase
           .from("cast_roles")
-          .update({ name: data.name })
+          .update({ name: data.name, priority: data.priority })
           .match({ id: castRole.data.id })
           .select(),
       });
@@ -148,6 +152,24 @@ export function CreateEditCastRole({
                       <FormControl>
                         <Input
                           type="text"
+                          placeholder="Type here..."
+                          disabled={form.formState.isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Priority</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
                           placeholder="Type here..."
                           disabled={form.formState.isSubmitting}
                           {...field}

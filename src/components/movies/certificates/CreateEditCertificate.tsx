@@ -99,6 +99,7 @@ export function CreateEditCertificate({
         onClose();
       }
     } catch (err) {
+      // console.log(err);
       toast.error("Error Adding Certificate");
     }
   };

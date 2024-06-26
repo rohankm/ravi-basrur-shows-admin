@@ -49,6 +49,8 @@ export const CompleteMovieSchema = z.object({
   description: z.string().min(10),
   release_date: z.string(),
   scheduled_release: z.string(),
+  duration: z.string(),
+  slug: z.string().regex(/^[a-z](-?[a-z])*$/),
   watching_option: z.object({
     value: z.string(),
     label: z.string(),
@@ -173,11 +175,28 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
         type: "trailer",
         provider: null,
       },
+      {
+        content: null,
+        type: "teaser",
+        provider: null,
+      },
     ],
     movie_posters: [
       {
         url: null,
         type: "poster-150x200",
+      },
+      {
+        url: null,
+        type: "homebanner-16x5",
+      },
+      {
+        url: null,
+        type: "playerthumbnail-16x9",
+      },
+      {
+        url: null,
+        type: "title",
       },
     ],
   };
@@ -223,10 +242,11 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
             title: data.title,
             description: data.description,
             is_released: true,
-            is_draft: false,
+            is_draft: true,
             release_date: data.release_date,
             scheduled_release: data.scheduled_release,
             pricing_amount: data.pricing_amount,
+            duration: data.duration,
             discounted_pricing_amount: data.discounted_pricing_amount,
             watching_option: data.watching_option.value,
           })
@@ -376,11 +396,13 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
       fields: [
         "title",
         "description",
+        "duration",
         "release_date",
         "movie_languages",
         "movie_certificates",
         "movie_genres",
         "movie_tags",
+        "slug",
       ],
     },
     {
@@ -532,6 +554,42 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
                         <Textarea
                           disabled={loading}
                           placeholder="Movie Description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Movie Duration in Seconds</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Movie Duration"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="string"
+                          disabled={loading}
+                          placeholder="slug"
                           {...field}
                         />
                       </FormControl>
@@ -1238,9 +1296,13 @@ export const CreateMovie: React.FC<ProfileFormType> = () => {
                                     <UppyComponent
                                       field={fieldInner}
                                       aspectRatio={
-                                        type.split("x")[0] / type.split("x")[1]
+                                        type?.split("x")
+                                          ? type.split("x")[0] /
+                                            type.split("x")[1]
+                                          : undefined
                                       }
-                                      bucket={"cast_images"}
+                                      bucket={"movie_posters"}
+                                      editOnSelect={!!type?.split("x")}
                                     />
                                   </FormControl>
                                   <FormMessage />

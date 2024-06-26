@@ -63,6 +63,7 @@ const formSchema = z.object({
       })
     )
     .min(1),
+  duration: z.string(),
 
   movie_certificates: z
     .array(
@@ -93,6 +94,7 @@ const formSchema = z.object({
       })
     )
     .min(1),
+  slug: z.string().regex(/^[a-z](-?[a-z])*$/),
 });
 
 type movieBasicType = z.infer<typeof formSchema>;
@@ -158,6 +160,7 @@ export function EditBasicInformation({
   const onSubmitEdit = async (data: movieBasicType) => {
     console.log(data);
 
+    console.log(parseInt(data.duration));
     try {
       const movieRsp = await mutate.mutateAsync({
         query: supabase
@@ -165,11 +168,14 @@ export function EditBasicInformation({
           .update({
             title: data.title,
             description: data.description,
-
+            duration: data.duration,
             release_date: data.release_date,
+            slug: data.slug,
           })
           .match({ id: movie_id }),
       });
+
+      console.log({ movieRsp });
 
       const deleted_movie_languages = deletedIds(
         data.movie_languages,
@@ -365,6 +371,37 @@ export function EditBasicInformation({
                         placeholder="Movie Description"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Movie Duration in Seconds</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        disabled={form.formState.isLoading}
+                        placeholder="Movie Duration"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input type="string" placeholder="slug" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

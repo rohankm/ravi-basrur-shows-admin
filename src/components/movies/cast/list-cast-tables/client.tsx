@@ -3,12 +3,26 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@/constants/data";
 import { Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { columns } from "./columns";
+import { DataTableFilterField } from "@/components/ui/data-table/datatable.types";
+import { Tables } from "@/types/database.types";
 
 interface Props {}
+
+const filterFields: DataTableFilterField<Tables<"cast_information">>[] = [
+  {
+    label: "First Name",
+    value: "first_name",
+    placeholder: "Filter first name",
+  },
+  {
+    label: "Last Name",
+    value: "last_name",
+    placeholder: "Filter last name",
+  },
+];
 
 export const Cast: React.FC<Props> = ({}) => {
   const router = useRouter();
@@ -30,7 +44,7 @@ export const Cast: React.FC<Props> = ({}) => {
       <Separator />
 
       <DataTable
-        searchKey="first_name"
+        filterFields={filterFields}
         columns={columns}
         tableName="cast_information"
       />

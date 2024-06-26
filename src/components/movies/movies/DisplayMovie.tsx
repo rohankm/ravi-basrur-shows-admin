@@ -18,6 +18,8 @@ import useMutationData from "@/hooks/supabase/useMutationData";
 import { useRouter } from "next/navigation";
 import useDeleteSingleFile from "../../../hooks/supabase/useDeleteSingleFile";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ViewingHistoryList } from "@/components/users/viewing-history-list/client";
+import { toast } from "sonner";
 
 function combineCastInformation(data) {
   const roleMap = {};
@@ -99,6 +101,11 @@ export default function DisplayMovie({ id }: { id: string }) {
                 content={movieInfo?.description}
               />
               <DisplayCard
+                title="Duration"
+                content={movieInfo?.duration + "s"}
+              />
+              <DisplayCard title="slug" content={movieInfo?.slug} />
+              <DisplayCard
                 title="Release Date"
                 content={new Date(movieInfo?.release_date).toDateString()}
               />
@@ -169,6 +176,8 @@ export default function DisplayMovie({ id }: { id: string }) {
                         };
                       }
                     ),
+                    duration: movieInfo.duration?.toString(),
+                    slug: movieInfo.slug,
                     movie_tags: movieInfo.movie_tags.map((d) => {
                       return {
                         label: d.tags?.name,
@@ -183,6 +192,55 @@ export default function DisplayMovie({ id }: { id: string }) {
                   }}
                 />
               )}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-6">
+            <AccordionTrigger className="text-xl font-bold">
+              Published Status
+            </AccordionTrigger>
+            <AccordionContent>
+              <DisplayCard
+                title="Published"
+                content={JSON.parse(!movieInfo?.is_draft).toString()}
+              />
+              <DisplayCard
+                title="Draft"
+                content={movieInfo?.is_draft.toString()}
+              />
+
+              <Button
+                className="mt-5"
+                onClick={async () => {
+                  const userconfirm = confirm(
+                    `Are you sure you want to change to ${
+                      movieInfo?.is_draft ? "Published" : "Draft"
+                    }`
+                  );
+
+                  if (userconfirm) {
+                    try {
+                      const movieRsp = await mutate.mutateAsync({
+                        query: supabase
+                          .from("movies")
+                          .update({
+                            is_draft: !movieInfo?.is_draft,
+                          })
+                          .match({ id: movieInfo?.id }),
+                      });
+
+                      toast("Movie has been Update.");
+                      refetch();
+                    } catch (err) {
+                      console.log(err);
+                      toast.error("Error updating");
+                    }
+                  }
+                }}
+              >
+                {movieInfo?.is_draft
+                  ? "Change to Published"
+                  : "Change to Draft"}
+              </Button>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
@@ -331,25 +389,68 @@ export default function DisplayMovie({ id }: { id: string }) {
                   open={editVideos}
                   movie_id={movieInfo.id}
                   defaultValues={{
-                    movie_videos: movieInfo.movie_videos.map((d) => {
-                      return {
-                        content: JSON.stringify(d.content),
-                        type: d.type,
-                        provider: {
-                          label: d.video_providers.name,
-                          value: d.video_providers.id,
-                        },
-                        _id: d.id,
-                      };
-                    }),
+                    movie_videos:
+                      movieInfo.movie_videos.length < 3
+                        ? [
+                            ...movieInfo.movie_videos.map((d) => {
+                              return {
+                                content: JSON.stringify(d.content),
+                                type: d.type,
+                                provider: {
+                                  label: d.video_providers.name,
+                                  value: d.video_providers.id,
+                                },
+                                _id: d.id,
+                              };
+                            }),
+                            {
+                              content: null,
+                              type: "teaser",
+                              provider: null,
+                            },
+                          ]
+                        : movieInfo.movie_videos.map((d) => {
+                            return {
+                              content: JSON.stringify(d.content),
+                              type: d.type,
+                              provider: {
+                                label: d.video_providers.name,
+                                value: d.video_providers.id,
+                              },
+                              _id: d.id,
+                            };
+                          }),
 
-                    movie_posters: movieInfo.movie_posters.map((d) => {
-                      return {
-                        url: d.url,
-                        type: d.type,
-                        _id: d.id,
-                      };
-                    }),
+                    movie_posters:
+                      movieInfo.movie_posters.length < 4
+                        ? [
+                            ...movieInfo.movie_posters.map((d) => {
+                              return {
+                                url: d.url,
+                                type: d.type,
+                                _id: d.id,
+                              };
+                            }),
+                            {
+                              url: null,
+                              type: "homebanner-16x5",
+                            },
+                            {
+                              url: null,
+                              type: "playerthumbnail-16x9",
+                            },
+                            {
+                              url: null,
+                              type: "title",
+                            },
+                          ]
+                        : movieInfo.movie_posters.map((d) => {
+                            return {
+                              url: d.url,
+                              type: d.type,
+                              _id: d.id,
+                            };
+                          }),
                   }}
                   onClose={() => {
                     refetch();
@@ -357,6 +458,15 @@ export default function DisplayMovie({ id }: { id: string }) {
                   }}
                 />
               )}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-5">
+            <AccordionTrigger className="text-xl font-bold">
+              Movie Viewing Histroy
+            </AccordionTrigger>
+            <AccordionContent>
+              <ViewingHistoryList movie_id={movieInfo?.id} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
