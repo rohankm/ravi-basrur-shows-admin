@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       access_roles: {
@@ -54,6 +29,132 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      ads: {
+        Row: {
+          ad_content: Json;
+          created_at: string;
+          description: string;
+          id: string;
+          is_draft: boolean;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          ad_content: Json;
+          created_at?: string;
+          description: string;
+          id?: string;
+          is_draft?: boolean;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          ad_content?: Json;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          is_draft?: boolean;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      campaign_ads: {
+        Row: {
+          ad_id: string;
+          ad_start_time: number;
+          campaign_id: number;
+          created_at: string;
+          duration: number;
+          id: number;
+          updated_at: string;
+        };
+        Insert: {
+          ad_id: string;
+          ad_start_time: number;
+          campaign_id: number;
+          created_at?: string;
+          duration?: number;
+          id?: number;
+          updated_at?: string;
+        };
+        Update: {
+          ad_id?: string;
+          ad_start_time?: number;
+          campaign_id?: number;
+          created_at?: string;
+          duration?: number;
+          id?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "campaign_ads_ad_id_fkey";
+            columns: ["ad_id"];
+            isOneToOne: false;
+            referencedRelation: "ads";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "campaign_ads_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      campaigns: {
+        Row: {
+          amount: number;
+          name: string;
+          created_at: string;
+          end_date: string;
+          id: number;
+          movie_id: string;
+          reserved_amount: number;
+          start_date: string;
+          updated_at: string;
+        };
+        Insert: {
+          amount: number;
+          name: string;
+          created_at?: string;
+          end_date: string;
+          id?: number;
+          movie_id: string;
+          reserved_amount: number;
+          start_date: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount?: number;
+          name?: string;
+          created_at?: string;
+          end_date?: string;
+          id?: number;
+          movie_id?: string;
+          reserved_amount?: number;
+          start_date?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "campaign_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "campaign_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       cast_information: {
         Row: {
@@ -93,18 +194,21 @@ export type Database = {
           created_at: string;
           id: string;
           name: string;
+          priority: number | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           name: string;
+          priority?: number | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           name?: string;
+          priority?: number | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -130,33 +234,63 @@ export type Database = {
         };
         Relationships: [];
       };
+      constants: {
+        Row: {
+          created_at: string;
+          id: string;
+          updated_at: string;
+          value: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          updated_at?: string;
+          value: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          value?: string;
+        };
+        Relationships: [];
+      };
       content_access: {
         Row: {
           created_at: string;
           end_date: string;
           id: string;
+          is_watched: boolean;
           movie_id: string;
+          payment_id: string | null;
           start_date: string;
           updated_at: string;
           user_id: string;
+          watch_count: number | null;
         };
         Insert: {
           created_at?: string;
           end_date: string;
           id?: string;
+          is_watched?: boolean;
           movie_id?: string;
+          payment_id?: string | null;
           start_date: string;
           updated_at?: string;
           user_id?: string;
+          watch_count?: number | null;
         };
         Update: {
           created_at?: string;
           end_date?: string;
           id?: string;
+          is_watched?: boolean;
           movie_id?: string;
+          payment_id?: string | null;
           start_date?: string;
           updated_at?: string;
           user_id?: string;
+          watch_count?: number | null;
         };
         Relationships: [
           {
@@ -174,10 +308,10 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "content_access_movie_id_fkey";
-            columns: ["movie_id"];
+            foreignKeyName: "content_access_payment_id_fkey";
+            columns: ["payment_id"];
             isOneToOne: false;
-            referencedRelation: "movies_details_mv";
+            referencedRelation: "payment_transactions";
             referencedColumns: ["id"];
           },
           {
@@ -277,22 +411,15 @@ export type Database = {
           {
             foreignKeyName: "home_slider_movies_id_fkey";
             columns: ["movies_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "movies";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "home_slider_movies_id_fkey";
             columns: ["movies_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "movies_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "home_slider_movies_id_fkey";
-            columns: ["movies_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -379,13 +506,6 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "movie_cast_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "movie_cast_role_id_fkey";
             columns: ["role_id"];
             isOneToOne: false;
@@ -437,13 +557,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies_details";
             referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_certificates_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
           }
         ];
       };
@@ -489,13 +602,6 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_genres_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           }
         ];
@@ -543,13 +649,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies_details";
             referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_languages_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
           }
         ];
       };
@@ -592,13 +691,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "movies_details";
             referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_posters_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
           }
         ];
       };
@@ -637,13 +729,6 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "movie_tags_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -699,13 +784,6 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "movie_videos_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "movie_videos_provider_fkey";
             columns: ["provider"];
             isOneToOne: false;
@@ -726,6 +804,7 @@ export type Database = {
           pricing_amount: number;
           release_date: string | null;
           scheduled_release: string | null;
+          slug: string | null;
           title: string;
           updated_at: string;
           watching_option: string;
@@ -741,6 +820,7 @@ export type Database = {
           pricing_amount?: number;
           release_date?: string | null;
           scheduled_release?: string | null;
+          slug?: string | null;
           title: string;
           updated_at?: string;
           watching_option: string;
@@ -756,6 +836,7 @@ export type Database = {
           pricing_amount?: number;
           release_date?: string | null;
           scheduled_release?: string | null;
+          slug?: string | null;
           title?: string;
           updated_at?: string;
           watching_option?: string;
@@ -766,7 +847,9 @@ export type Database = {
         Row: {
           amount: number;
           created_at: string | null;
+          device_info: Json;
           id: string;
+          ip_address: string;
           movie_id: string;
           payment_gateway: string;
           payment_method: string | null;
@@ -779,7 +862,9 @@ export type Database = {
         Insert: {
           amount: number;
           created_at?: string | null;
+          device_info?: Json;
           id?: string;
+          ip_address: string;
           movie_id?: string;
           payment_gateway: string;
           payment_method?: string | null;
@@ -792,7 +877,9 @@ export type Database = {
         Update: {
           amount?: number;
           created_at?: string | null;
+          device_info?: Json;
           id?: string;
+          ip_address?: string;
           movie_id?: string;
           payment_gateway?: string;
           payment_method?: string | null;
@@ -818,13 +905,6 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "payment_transactions_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "payment_transactions_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
@@ -833,11 +913,72 @@ export type Database = {
           }
         ];
       };
+      payment_transactions_history: {
+        Row: {
+          amount: number;
+          created_at: string | null;
+          device_info: Json;
+          id: string;
+          ip_address: string;
+          movie_id: string;
+          operation_timestamp: string | null;
+          operation_type: string;
+          payment_gateway: string;
+          payment_method: string | null;
+          payment_transaction_id: string;
+          response: Json | null;
+          status: Database["public"]["Enums"]["payment_status"];
+          transaction_id: string | null;
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string | null;
+          device_info: Json;
+          id?: string;
+          ip_address: string;
+          movie_id: string;
+          operation_timestamp?: string | null;
+          operation_type: string;
+          payment_gateway: string;
+          payment_method?: string | null;
+          payment_transaction_id: string;
+          response?: Json | null;
+          status: Database["public"]["Enums"]["payment_status"];
+          transaction_id?: string | null;
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string | null;
+          device_info?: Json;
+          id?: string;
+          ip_address?: string;
+          movie_id?: string;
+          operation_timestamp?: string | null;
+          operation_type?: string;
+          payment_gateway?: string;
+          payment_method?: string | null;
+          payment_transaction_id?: string;
+          response?: Json | null;
+          status?: Database["public"]["Enums"]["payment_status"];
+          transaction_id?: string | null;
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar: string | null;
           created_at: string;
+          email: string | null;
+          first_name: string | null;
           id: string;
+          last_name: string | null;
+          phone_number: string | null;
           profile_name: string | null;
           updated_at: string;
           user_id: string | null;
@@ -845,7 +986,11 @@ export type Database = {
         Insert: {
           avatar?: string | null;
           created_at?: string;
+          email?: string | null;
+          first_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          phone_number?: string | null;
           profile_name?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -853,7 +998,11 @@ export type Database = {
         Update: {
           avatar?: string | null;
           created_at?: string;
+          email?: string | null;
+          first_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          phone_number?: string | null;
           profile_name?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -861,6 +1010,71 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      push_notifications: {
+        Row: {
+          body: string | null;
+          created_at: string;
+          data: Json | null;
+          id: string;
+          title: string | null;
+          ttl: string | null;
+        };
+        Insert: {
+          body?: string | null;
+          created_at?: string;
+          data?: Json | null;
+          id?: string;
+          title?: string | null;
+          ttl?: string | null;
+        };
+        Update: {
+          body?: string | null;
+          created_at?: string;
+          data?: Json | null;
+          id?: string;
+          title?: string | null;
+          ttl?: string | null;
+        };
+        Relationships: [];
+      };
+      push_notifications_token: {
+        Row: {
+          created_at: string;
+          id: string;
+          push_data: string | null;
+          push_url: string | null;
+          token: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          push_data?: string | null;
+          push_url?: string | null;
+          token?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          push_data?: string | null;
+          push_url?: string | null;
+          token?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "push_notifications_token_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "users";
@@ -912,13 +1126,6 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "rental_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -1001,13 +1208,6 @@ export type Database = {
             columns: ["movie_id"];
             isOneToOne: false;
             referencedRelation: "movies_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "reviews_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
             referencedColumns: ["id"];
           },
           {
@@ -1173,42 +1373,51 @@ export type Database = {
       };
       viewing_history: {
         Row: {
+          completed: boolean;
+          content: Json;
           created_at: string;
           current_time: number;
-          device_type: string | null;
+          device_info: Json | null;
           id: string;
           ip_address: string | null;
           movie_id: string | null;
           others: Json | null;
           player_event: Database["public"]["Enums"]["player_events"];
-          profile_id: string;
+          profile_id: string | null;
           tv_show_episode_id: string | null;
+          type: string;
           updated_at: string;
         };
         Insert: {
+          completed?: boolean;
+          content: Json;
           created_at?: string;
           current_time?: number;
-          device_type?: string | null;
+          device_info?: Json | null;
           id?: string;
           ip_address?: string | null;
           movie_id?: string | null;
           others?: Json | null;
           player_event: Database["public"]["Enums"]["player_events"];
-          profile_id: string;
+          profile_id?: string | null;
           tv_show_episode_id?: string | null;
+          type: string;
           updated_at?: string;
         };
         Update: {
+          completed?: boolean;
+          content?: Json;
           created_at?: string;
           current_time?: number;
-          device_type?: string | null;
+          device_info?: Json | null;
           id?: string;
           ip_address?: string | null;
           movie_id?: string | null;
           others?: Json | null;
           player_event?: Database["public"]["Enums"]["player_events"];
-          profile_id?: string;
+          profile_id?: string | null;
           tv_show_episode_id?: string | null;
+          type?: string;
           updated_at?: string;
         };
         Relationships: [
@@ -1227,13 +1436,6 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "viewing_history_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "viewing_history_profile_id_fkey";
             columns: ["profile_id"];
             isOneToOne: false;
@@ -1245,6 +1447,65 @@ export type Database = {
             columns: ["tv_show_episode_id"];
             isOneToOne: false;
             referencedRelation: "episodes";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      viewing_history_logs: {
+        Row: {
+          completed: boolean;
+          created_at: string;
+          current_time: number;
+          device_info: Json | null;
+          id: string;
+          ip_address: string | null;
+          movie_id: string | null;
+          others: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id: string | null;
+          tv_show_episode_id: string | null;
+          type: string | null;
+          updated_at: string;
+          viewing_history_id: string;
+        };
+        Insert: {
+          completed?: boolean;
+          created_at: string;
+          current_time?: number;
+          device_info?: Json | null;
+          id?: string;
+          ip_address?: string | null;
+          movie_id?: string | null;
+          others?: Json | null;
+          player_event: Database["public"]["Enums"]["player_events"];
+          profile_id?: string | null;
+          tv_show_episode_id?: string | null;
+          type?: string | null;
+          updated_at: string;
+          viewing_history_id: string;
+        };
+        Update: {
+          completed?: boolean;
+          created_at?: string;
+          current_time?: number;
+          device_info?: Json | null;
+          id?: string;
+          ip_address?: string | null;
+          movie_id?: string | null;
+          others?: Json | null;
+          player_event?: Database["public"]["Enums"]["player_events"];
+          profile_id?: string | null;
+          tv_show_episode_id?: string | null;
+          type?: string | null;
+          updated_at?: string;
+          viewing_history_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "viewing_history_logs_viewing_history_id_fkey";
+            columns: ["viewing_history_id"];
+            isOneToOne: false;
+            referencedRelation: "viewing_history";
             referencedColumns: ["id"];
           }
         ];
@@ -1293,13 +1554,6 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "watchlists_movie_id_fkey";
-            columns: ["movie_id"];
-            isOneToOne: false;
-            referencedRelation: "movies_details_mv";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "watchlists_profile_id_fkey";
             columns: ["profile_id"];
             isOneToOne: false;
@@ -1321,9 +1575,11 @@ export type Database = {
         Row: {
           cast: Json | null;
           certificates: string[] | null;
+          content_access: boolean | null;
           created_at: string | null;
           description: string | null;
           discounted_pricing_amount: number | null;
+          duration: number | null;
           genres: string[] | null;
           home_slider: boolean | null;
           id: string | null;
@@ -1335,41 +1591,353 @@ export type Database = {
           pricing_amount: number | null;
           release_date: string | null;
           scheduled_release: string | null;
+          slug: string | null;
           tags: string[] | null;
           title: string | null;
           updated_at: string | null;
-          watching_option: string | null;
-        };
-        Relationships: [];
-      };
-      movies_details_mv: {
-        Row: {
-          cast: Json | null;
-          certificates: string[] | null;
-          created_at: string | null;
-          description: string | null;
-          discounted_pricing_amount: number | null;
-          genres: string[] | null;
-          home_slider: boolean | null;
-          id: string | null;
-          is_draft: boolean | null;
-          is_released: boolean | null;
-          languages: string[] | null;
-          movie_posters: Json | null;
-          movie_videos: Json | null;
-          pricing_amount: number | null;
-          release_date: string | null;
-          scheduled_release: string | null;
-          tags: string[] | null;
-          title: string | null;
-          updated_at: string | null;
+          watch_list: boolean | null;
           watching_option: string | null;
         };
         Relationships: [];
       };
     };
     Functions: {
-      [_ in never]: never;
+      gbt_bit_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_bool_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_bool_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_bpchar_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_bytea_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_cash_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_cash_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_date_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_date_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_decompress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_enum_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_enum_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_float4_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_float4_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_float8_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_float8_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_inet_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int2_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int2_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int4_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int4_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int8_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_int8_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_intv_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_intv_decompress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_intv_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_macad_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_macad_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_macad8_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_macad8_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_numeric_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_oid_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_oid_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_text_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_time_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_time_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_timetz_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_ts_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_ts_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_tstz_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_uuid_compress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_uuid_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_var_decompress: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbt_var_fetch: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey_var_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey_var_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey16_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey16_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey2_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey2_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey32_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey32_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey4_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey4_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey8_in: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
+      gbtreekey8_out: {
+        Args: {
+          "": unknown;
+        };
+        Returns: unknown;
+      };
     };
     Enums: {
       payment_status:
@@ -1389,311 +1957,6 @@ export type Database = {
         | "initial"
         | "back";
       watching_options: "rental" | "paid" | "free";
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-  storage: {
-    Tables: {
-      buckets: {
-        Row: {
-          allowed_mime_types: string[] | null;
-          avif_autodetection: boolean | null;
-          created_at: string | null;
-          file_size_limit: number | null;
-          id: string;
-          name: string;
-          owner: string | null;
-          owner_id: string | null;
-          public: boolean | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          allowed_mime_types?: string[] | null;
-          avif_autodetection?: boolean | null;
-          created_at?: string | null;
-          file_size_limit?: number | null;
-          id: string;
-          name: string;
-          owner?: string | null;
-          owner_id?: string | null;
-          public?: boolean | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          allowed_mime_types?: string[] | null;
-          avif_autodetection?: boolean | null;
-          created_at?: string | null;
-          file_size_limit?: number | null;
-          id?: string;
-          name?: string;
-          owner?: string | null;
-          owner_id?: string | null;
-          public?: boolean | null;
-          updated_at?: string | null;
-        };
-        Relationships: [];
-      };
-      migrations: {
-        Row: {
-          executed_at: string | null;
-          hash: string;
-          id: number;
-          name: string;
-        };
-        Insert: {
-          executed_at?: string | null;
-          hash: string;
-          id: number;
-          name: string;
-        };
-        Update: {
-          executed_at?: string | null;
-          hash?: string;
-          id?: number;
-          name?: string;
-        };
-        Relationships: [];
-      };
-      objects: {
-        Row: {
-          bucket_id: string | null;
-          created_at: string | null;
-          id: string;
-          last_accessed_at: string | null;
-          metadata: Json | null;
-          name: string | null;
-          owner: string | null;
-          owner_id: string | null;
-          path_tokens: string[] | null;
-          updated_at: string | null;
-          version: string | null;
-        };
-        Insert: {
-          bucket_id?: string | null;
-          created_at?: string | null;
-          id?: string;
-          last_accessed_at?: string | null;
-          metadata?: Json | null;
-          name?: string | null;
-          owner?: string | null;
-          owner_id?: string | null;
-          path_tokens?: string[] | null;
-          updated_at?: string | null;
-          version?: string | null;
-        };
-        Update: {
-          bucket_id?: string | null;
-          created_at?: string | null;
-          id?: string;
-          last_accessed_at?: string | null;
-          metadata?: Json | null;
-          name?: string | null;
-          owner?: string | null;
-          owner_id?: string | null;
-          path_tokens?: string[] | null;
-          updated_at?: string | null;
-          version?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "objects_bucketId_fkey";
-            columns: ["bucket_id"];
-            isOneToOne: false;
-            referencedRelation: "buckets";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      s3_multipart_uploads: {
-        Row: {
-          bucket_id: string;
-          created_at: string;
-          id: string;
-          in_progress_size: number;
-          key: string;
-          owner_id: string | null;
-          upload_signature: string;
-          version: string;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string;
-          id: string;
-          in_progress_size?: number;
-          key: string;
-          owner_id?: string | null;
-          upload_signature: string;
-          version: string;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string;
-          id?: string;
-          in_progress_size?: number;
-          key?: string;
-          owner_id?: string | null;
-          upload_signature?: string;
-          version?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey";
-            columns: ["bucket_id"];
-            isOneToOne: false;
-            referencedRelation: "buckets";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      s3_multipart_uploads_parts: {
-        Row: {
-          bucket_id: string;
-          created_at: string;
-          etag: string;
-          id: string;
-          key: string;
-          owner_id: string | null;
-          part_number: number;
-          size: number;
-          upload_id: string;
-          version: string;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string;
-          etag: string;
-          id?: string;
-          key: string;
-          owner_id?: string | null;
-          part_number: number;
-          size?: number;
-          upload_id: string;
-          version: string;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string;
-          etag?: string;
-          id?: string;
-          key?: string;
-          owner_id?: string | null;
-          part_number?: number;
-          size?: number;
-          upload_id?: string;
-          version?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey";
-            columns: ["bucket_id"];
-            isOneToOne: false;
-            referencedRelation: "buckets";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey";
-            columns: ["upload_id"];
-            isOneToOne: false;
-            referencedRelation: "s3_multipart_uploads";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      can_insert_object: {
-        Args: {
-          bucketid: string;
-          name: string;
-          owner: string;
-          metadata: Json;
-        };
-        Returns: undefined;
-      };
-      extension: {
-        Args: {
-          name: string;
-        };
-        Returns: string;
-      };
-      filename: {
-        Args: {
-          name: string;
-        };
-        Returns: string;
-      };
-      foldername: {
-        Args: {
-          name: string;
-        };
-        Returns: string[];
-      };
-      get_size_by_bucket: {
-        Args: Record<PropertyKey, never>;
-        Returns: {
-          size: number;
-          bucket_id: string;
-        }[];
-      };
-      list_multipart_uploads_with_delimiter: {
-        Args: {
-          bucket_id: string;
-          prefix_param: string;
-          delimiter_param: string;
-          max_keys?: number;
-          next_key_token?: string;
-          next_upload_token?: string;
-        };
-        Returns: {
-          key: string;
-          id: string;
-          created_at: string;
-        }[];
-      };
-      list_objects_with_delimiter: {
-        Args: {
-          bucket_id: string;
-          prefix_param: string;
-          delimiter_param: string;
-          max_keys?: number;
-          start_after?: string;
-          next_token?: string;
-        };
-        Returns: {
-          name: string;
-          id: string;
-          metadata: Json;
-          updated_at: string;
-        }[];
-      };
-      search: {
-        Args: {
-          prefix: string;
-          bucketname: string;
-          limits?: number;
-          levels?: number;
-          offsets?: number;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
-        };
-        Returns: {
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
-          last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-    };
-    Enums: {
-      [_ in never]: never;
     };
     CompositeTypes: {
       [_ in never]: never;

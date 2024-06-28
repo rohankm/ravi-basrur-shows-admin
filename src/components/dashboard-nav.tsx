@@ -72,6 +72,24 @@ const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: "Campaign and Payouts",
+    icon: "clapperboard",
+    // href: "/example",
+    isChidren: true,
+    children: [
+      {
+        title: "Ads",
+        href: "/dashboard/ads",
+        icon: "clapperboard",
+      },
+      {
+        title: "Campaigns",
+        href: "/dashboard/campaigns",
+        icon: "clapperboard",
+      },
+    ],
+  },
+  {
     title: "Users",
     href: "/dashboard/users",
     icon: "user",
