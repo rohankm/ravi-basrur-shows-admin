@@ -44,6 +44,7 @@ const formSchema = z.object({
   start_date: z.string(),
   end_date: z.string(),
   amount: z.string(),
+  pay_per_view: z.string(),
   is_draft: z.boolean().optional(),
   movie_id: z.object({
     value: z.string().uuid(),
@@ -56,9 +57,11 @@ type AdType = z.infer<typeof formSchema>;
 export function CreateEditCampaign({
   open = false,
   editCampaignId,
+  onClose: onCloseProp,
 }: {
   open: boolean;
   editCampaignId?: string | null | undefined;
+  onClose?: () => {};
 }) {
   const edit = !!editCampaignId;
   const rotuer = useRouter();
@@ -103,6 +106,10 @@ export function CreateEditCampaign({
 
   const onClose = () => {
     form.reset(defaultValues);
+    if (onCloseProp) {
+      onCloseProp();
+      return;
+    }
     rotuer.back();
   };
   const upsertFile = useUpsertToStorage();
@@ -147,13 +154,12 @@ export function CreateEditCampaign({
             reserved_amount: data.amount,
             movie_id: data.movie_id.value,
           })
-          .match({ id: campaign.data.id })
-          .select(),
+          .match({ id: campaign.data.id }),
       });
 
       console.log(rsp);
 
-      if (rsp.data) {
+      if (!rsp.error) {
         toast("Campaign has been updated.");
 
         onClose();
@@ -295,10 +301,23 @@ export function CreateEditCampaign({
                 />
                 <FormField
                   control={form.control}
+                  name="pay_per_view"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pay per View Amount</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel>Total Campaign Amount</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -333,7 +352,7 @@ export function CreateEditCampaign({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="is_draft"
                   render={({ field }) => (
@@ -350,7 +369,7 @@ export function CreateEditCampaign({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <Button
                   disabled={form.formState.isSubmitting}
                   className="ml-auto w-full mt-5"
