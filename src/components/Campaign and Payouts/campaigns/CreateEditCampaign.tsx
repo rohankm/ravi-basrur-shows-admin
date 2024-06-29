@@ -122,7 +122,6 @@ export function CreateEditCampaign({
           .from("campaigns")
           .insert({
             ...data,
-            reserved_amount: data.amount,
             movie_id: data.movie_id.value,
           })
           .select(),
@@ -151,7 +150,6 @@ export function CreateEditCampaign({
           .from("campaigns")
           .update({
             ...data,
-            reserved_amount: data.amount,
             movie_id: data.movie_id.value,
           })
           .match({ id: campaign.data.id }),
