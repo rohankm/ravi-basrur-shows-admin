@@ -36,6 +36,8 @@ import {
   UserX2Icon,
   Users,
   X,
+  Bell,
+  IndianRupee,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -74,6 +76,8 @@ export const Icons = {
   tags: Tags,
   users: Users,
   "panel-bottom-dashed": PanelBottom,
+  bell: Bell,
+  "indian-rupee": IndianRupee,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

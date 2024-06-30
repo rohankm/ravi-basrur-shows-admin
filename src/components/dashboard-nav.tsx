@@ -73,7 +73,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     title: "Campaign and Payouts",
-    icon: "clapperboard",
+    icon: "indian-rupee",
     // href: "/example",
     isChidren: true,
     children: [
@@ -99,7 +99,13 @@ const NAV_ITEMS: NavItem[] = [
     title: "Home Page Slider",
     href: "/dashboard/home-page-slider",
     icon: "panel-bottom-dashed",
-    label: "Users",
+    label: "Home Page Slider",
+  },
+  {
+    title: "Push Notifications",
+    href: "/dashboard/push-notifications",
+    icon: "bell",
+    label: "Push Notifications",
   },
 ];
 

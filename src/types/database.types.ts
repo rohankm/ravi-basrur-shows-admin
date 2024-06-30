@@ -64,28 +64,28 @@ export type Database = {
         Row: {
           ad_id: string;
           ad_start_time: number;
-          campaign_id: number;
+          campaign_id: string;
           created_at: string;
           duration: number;
-          id: number;
+          id: string;
           updated_at: string;
         };
         Insert: {
           ad_id: string;
           ad_start_time: number;
-          campaign_id: number;
+          campaign_id: string;
           created_at?: string;
           duration?: number;
-          id?: number;
+          id?: string;
           updated_at?: string;
         };
         Update: {
           ad_id?: string;
           ad_start_time?: number;
-          campaign_id?: number;
+          campaign_id?: string;
           created_at?: string;
           duration?: number;
-          id?: number;
+          id?: string;
           updated_at?: string;
         };
         Relationships: [
@@ -108,33 +108,42 @@ export type Database = {
       campaigns: {
         Row: {
           amount: number;
-          name: string;
           created_at: string;
+          description: string;
           end_date: string;
-          id: number;
+          id: string;
+          is_draft: boolean;
           movie_id: string;
+          name: string;
+          pay_per_view: number;
           reserved_amount: number;
           start_date: string;
           updated_at: string;
         };
         Insert: {
           amount: number;
-          name: string;
           created_at?: string;
+          description: string;
           end_date: string;
-          id?: number;
+          id?: string;
+          is_draft?: boolean;
           movie_id: string;
+          name: string;
+          pay_per_view: number;
           reserved_amount: number;
           start_date: string;
           updated_at?: string;
         };
         Update: {
           amount?: number;
-          name?: string;
           created_at?: string;
+          description?: string;
           end_date?: string;
-          id?: number;
+          id?: string;
+          is_draft?: boolean;
           movie_id?: string;
+          name?: string;
+          pay_per_view?: number;
           reserved_amount?: number;
           start_date?: string;
           updated_at?: string;
@@ -970,6 +979,74 @@ export type Database = {
         };
         Relationships: [];
       };
+      payout_transactions: {
+        Row: {
+          amount: number;
+          created_at: string | null;
+          extra_data: Json | null;
+          id: string;
+          movie_id: string;
+          qualified: boolean | null;
+          session_id: string;
+          status: Database["public"]["Enums"]["payout_status"];
+          updated_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string | null;
+          extra_data?: Json | null;
+          id?: string;
+          movie_id: string;
+          qualified?: boolean | null;
+          session_id: string;
+          status?: Database["public"]["Enums"]["payout_status"];
+          updated_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string | null;
+          extra_data?: Json | null;
+          id?: string;
+          movie_id?: string;
+          qualified?: boolean | null;
+          session_id?: string;
+          status?: Database["public"]["Enums"]["payout_status"];
+          updated_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payout_transactions_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payout_transactions_movie_id_fkey";
+            columns: ["movie_id"];
+            isOneToOne: false;
+            referencedRelation: "movies_details";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payout_transactions_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "viewing_history";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payout_transactions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       profiles: {
         Row: {
           avatar: string | null;
@@ -1022,7 +1099,9 @@ export type Database = {
           body: string | null;
           created_at: string;
           data: Json | null;
+          failure_count: number | null;
           id: string;
+          success_count: number | null;
           title: string | null;
           ttl: string | null;
         };
@@ -1030,7 +1109,9 @@ export type Database = {
           body?: string | null;
           created_at?: string;
           data?: Json | null;
+          failure_count?: number | null;
           id?: string;
+          success_count?: number | null;
           title?: string | null;
           ttl?: string | null;
         };
@@ -1038,7 +1119,9 @@ export type Database = {
           body?: string | null;
           created_at?: string;
           data?: Json | null;
+          failure_count?: number | null;
           id?: string;
+          success_count?: number | null;
           title?: string | null;
           ttl?: string | null;
         };
@@ -1048,6 +1131,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          platform: string | null;
           push_data: string | null;
           push_url: string | null;
           token: string | null;
@@ -1057,6 +1141,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: string;
+          platform?: string | null;
           push_data?: string | null;
           push_url?: string | null;
           token?: string | null;
@@ -1066,6 +1151,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: string;
+          platform?: string | null;
           push_data?: string | null;
           push_url?: string | null;
           token?: string | null;
@@ -1250,6 +1336,68 @@ export type Database = {
             columns: ["role_id"];
             isOneToOne: false;
             referencedRelation: "access_roles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      session_ads: {
+        Row: {
+          ad_id: string;
+          campaign_id: string;
+          created_at: string;
+          id: string;
+          is_watched: boolean;
+          session_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          ad_id: string;
+          campaign_id: string;
+          created_at?: string;
+          id?: string;
+          is_watched?: boolean;
+          session_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          ad_id?: string;
+          campaign_id?: string;
+          created_at?: string;
+          id?: string;
+          is_watched?: boolean;
+          session_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "session_ads_ad_id_fkey";
+            columns: ["ad_id"];
+            isOneToOne: false;
+            referencedRelation: "ads";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "session_ads_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "session_ads_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "viewing_history";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "session_ads_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
             referencedColumns: ["id"];
           }
         ];
@@ -1588,6 +1736,7 @@ export type Database = {
           languages: string[] | null;
           movie_posters: Json | null;
           movie_videos: Json | null;
+          pay_per_view: number | null;
           pricing_amount: number | null;
           release_date: string | null;
           scheduled_release: string | null;
@@ -1946,6 +2095,7 @@ export type Database = {
         | "success"
         | "failed"
         | "refunded";
+      payout_status: "initial" | "not qualified" | "processing" | "processed";
       player_events:
         | "pause"
         | "play"
@@ -1955,7 +2105,9 @@ export type Database = {
         | "subtitle"
         | "current_time"
         | "initial"
-        | "back";
+        | "back"
+        | "ad_shown"
+        | "ad_closed";
       watching_options: "rental" | "paid" | "free";
     };
     CompositeTypes: {
