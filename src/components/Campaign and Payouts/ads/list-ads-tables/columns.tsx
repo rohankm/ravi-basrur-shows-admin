@@ -27,25 +27,32 @@ export const columns: ColumnDef<Tables<"ads">>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "ad_content",
-    header: "Ad Content",
-    cell: ({ row, getValue }) => {
-      const img = useFetchStorage({
-        url: getValue().data as string,
-        bucket: "ads",
-      });
+  // {
+  //   accessorKey: "ad_content",
+  //   header: "Ad Content",
+  //   cell: ({ row, getValue }) => {
+  //     const img = useFetchStorage({
+  //       url: getValue().data as string,
+  //       bucket: "ads",
+  //     });
 
-      return (
-        <Avatar>
-          <AvatarImage src={img.url} />
-        </Avatar>
-      );
-    },
-  },
+  //     return (
+  //       <Avatar>
+  //         <AvatarImage src={img.url} />
+  //       </Avatar>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "name",
     header: "Name",
+  },
+  {
+    accessorKey: "ad_content",
+    cell: ({ row, getValue }) => {
+      return <p>{JSON.stringify(getValue())}</p>;
+    },
+    header: "Ad Content",
   },
   {
     accessorKey: "description",

@@ -36,14 +36,16 @@ import { Skeleton } from "../../ui/skeleton";
 import UppyComponent from "@/components/ui/UppyComponent";
 import useUpsertToStorage from "@/hooks/supabase/upsertToStorage";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(3),
   description: z.string(),
-  ad_image: z.union([
-    z.string(), // For URLs
-    z.any(), // For File objects
-  ]),
+  // ad_image: z.union([
+  //   z.string(), // For URLs
+  //   z.any(), // For File objects
+  // ]),
+  ad_content: z.string(),
   is_draft: z.boolean().optional(),
 });
 
@@ -82,7 +84,7 @@ export function CreateEditAds({
         name: Ad.data.name,
         description: Ad.data.description,
 
-        ad_image: Ad.data.ad_content.data,
+        ad_content: JSON.stringify(Ad.data.ad_content),
         is_draft: Ad.data.is_draft,
       });
     else form.reset(defaultValues);
@@ -97,20 +99,21 @@ export function CreateEditAds({
     console.log(data.is_draft);
 
     try {
-      const uploadId = await upsertFile({
-        image: data.ad_image,
-        bucket: "ads",
-      });
+      // const uploadId = await upsertFile({
+      //   image: data.ad_image,
+      //   bucket: "ads",
+      // });
       const rsp = await mutate.mutateAsync({
         query: supabase
           .from("ads")
           .insert({
             name: data.name,
             description: data.description,
-            ad_content: {
-              data: uploadId,
-              type: "image",
-            },
+            // ad_content: {
+            //   data: uploadId,
+            //   type: "image",
+            // },
+            ad_content: JSON.parse(data.ad_content),
             is_draft: data.is_draft,
           })
           .select(),
@@ -134,21 +137,18 @@ export function CreateEditAds({
     try {
       if (!Ad.data) return;
 
-      const uploadId = await upsertFile({
-        image: data.ad_image,
-        originalImage: Ad.data.ad_content.data,
-        bucket: "ads",
-      });
+      // const uploadId = await upsertFile({
+      //   image: data.ad_image,
+      //   originalImage: Ad.data.ad_content.data,
+      //   bucket: "ads",
+      // });
       const rsp = await mutate.mutateAsync({
         query: supabase
           .from("ads")
           .update({
             name: data.name,
             description: data.description,
-            ad_content: {
-              data: uploadId,
-              type: "image",
-            },
+            ad_content: JSON.parse(data.ad_content),
             is_draft: data.is_draft,
           })
           .match({ id: Ad.data.id })
@@ -221,6 +221,24 @@ export function CreateEditAds({
                 />
                 <FormField
                   control={form.control}
+                  name="ad_content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ad Content in JSON</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          type="text"
+                          placeholder="Type here..."
+                          disabled={form.formState.isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* <FormField
+                  control={form.control}
                   name="ad_image"
                   render={({ field }) => (
                     <FormItem>
@@ -231,7 +249,7 @@ export function CreateEditAds({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <FormField
                   control={form.control}
                   name="is_draft"

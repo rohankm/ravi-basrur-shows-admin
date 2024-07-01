@@ -36,16 +36,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         fileUrl: data.ad_content.data,
         bucket: "ads",
       });
-      const rsp = await mutate.mutateAsync({
-        query: supabase
-          .from("ads")
-          .delete()
-          .match({
-            id: data.id,
-          })
-          .select("*"),
-        deleteId: data.id,
-      });
+      // const rsp = await mutate.mutateAsync({
+      //   query: supabase
+      //     .from("ads")
+      //     .delete()
+      //     .match({
+      //       id: data.id,
+      //     })
+      //     .select("*"),
+      //   deleteId: data.id,
+      // });
 
       toast("Ad deleted successfully.");
       setOpen(false);
